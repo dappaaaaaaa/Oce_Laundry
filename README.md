@@ -30,13 +30,13 @@ Untuk menjalankan proyek ini, disarankan:
 |- Backend-Laravel/backend-TA/    -> Proyek Laravel + Filament
 ```
 
-## ⚡ Catatan Integrasi
+## Catatan Integrasi
 Agar **Frontend (Flutter)** dapat terhubung dengan **Backend (Laravel API)**:
 1. Pastikan backend Laravel sudah dijalankan dan dapat diakses via browser/postman.  
    Contoh: `http://127.0.0.1:8000/api/`
 2. Sesuaikan **BASE_URL** di konfigurasi `ApiService` pada proyek Flutter (`frontend/`) agar mengarah ke URL backend.
 3. Pastikan database sudah dimigrasikan & di-seed sesuai panduan di `backend/README.md`.
 
-👉 Lihat panduan detail pada folder masing-masing:
+Lihat panduan detail pada folder masing-masing:
 - [Frontend README](./Frontend-Mobile/aplikasi_demo_test/README.md)
 - [Backend README](./Backend-Laravel/backend-TA/README.md)
