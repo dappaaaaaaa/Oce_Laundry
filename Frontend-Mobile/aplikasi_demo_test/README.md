@@ -15,13 +15,13 @@ flutter doctor
 ## Cara Menjalankan
 1. Masuk ke direktori frontend:
    ```bash
-   cd frontend
+   cd Frontend-Mobile/aplikasi_demo_test
    ```
 2. Install dependency:
    ```bash
    flutter pub get
    ```
-3. Sesuaikan **BASE_URL API** di file konfigurasi `lib/services/api_service.dart` agar sesuai dengan URL backend Laravel.
+3. Sesuaikan **BASE_URL API** di file konfigurasi `lib/service/api_service.dart` agar sesuai dengan URL backend Laravel.
    ```dart
    static const String baseUrl = "http://127.0.0.1:8000/api"; 
    ```
