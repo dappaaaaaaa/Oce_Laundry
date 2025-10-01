@@ -11,7 +11,7 @@ Pastikan sudah menginstal:
 ## Setup & Menjalankan
 1. Masuk ke direktori backend:
    ```bash
-   cd backend
+   cd Backend-Laravel/backend-TA
    ```
 2. Install dependency Laravel:
    ```bash
