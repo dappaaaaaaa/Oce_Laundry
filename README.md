@@ -1,24 +1,16 @@
-# 💧 Aplikasi Kasir Laundry – Tugas Akhir
+# Aplikasi Kasir Laundry – Tugas Akhir
 Proyek ini merupakan **Aplikasi Kasir Laundry** yang dikembangkan sebagai **Tugas Akhir** di Politeknik Negeri Pontianak.  
 Aplikasi ini dirancang untuk membantu proses operasional laundry, mulai dari pencatatan transaksi, manajemen pelanggan, pembayaran (Cash & QRIS), hingga pencetakan struk dengan printer thermal Bluetooth.
 
-## ✨ Fitur Utama
-- 📌 Manajemen Pelanggan (CRUD)
-- 🧺 Manajemen Barang & Layanan Laundry
-- 💳 Pembayaran (Cash & QRIS via Midtrans)
-- 🧾 Pencetakan Struk dengan Printer Thermal Bluetooth
-- 📊 Laporan & Riwayat Transaksi
-- 🔐 Manajemen User & Role dengan Filament Shield (backend)
-- 🌐 Realtime Update antara Flutter & Laravel API
 
-## 🛠️ Teknologi yang Digunakan
+## Teknologi yang Digunakan
 - **Frontend**: [Flutter](https://flutter.dev/) (Dart)
 - **Backend**: [Laravel 11](https://laravel.com/) + [Filament](https://filamentphp.com/) (Admin Panel)
 - **Database**: MySQL/MariaDB
 - **Payment Gateway**: Midtrans (QRIS Integration)
 - **Printing**: print_bluetooth_thermal (Flutter package)
 
-## 🖥️ Spesifikasi Sistem
+## Spesifikasi Sistem
 Untuk menjalankan proyek ini, disarankan:
 - **OS**: Windows 10/11, Linux, atau macOS
 - **RAM**: Minimal 4GB (disarankan 8GB+)
@@ -31,11 +23,11 @@ Untuk menjalankan proyek ini, disarankan:
   - Node.js & NPM (opsional untuk frontend tambahan di Laravel)
   - Git
 
-## 📂 Struktur Folder
+## Struktur Folder
 ```
 |- README.md (ini file root)
-|- frontend/   -> Proyek Flutter
-|- backend/    -> Proyek Laravel + Filament
+|- Frontend-Mobile/aplikasi_demo_test/   -> Proyek Flutter
+|- Backend-Laravel/backend-TA/    -> Proyek Laravel + Filament
 ```
 
 ## ⚡ Catatan Integrasi
