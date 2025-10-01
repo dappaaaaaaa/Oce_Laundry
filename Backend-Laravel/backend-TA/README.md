@@ -53,7 +53,6 @@ Backend dapat diakses pada:
 - Midtrans harus dikonfigurasi di `.env`:
   ```env
   MIDTRANS_SERVER_KEY=your_server_key
-  MIDTRANS_CLIENT_KEY=your_client_key
   MIDTRANS_IS_PRODUCTION=false
   ```
 - Pastikan CORS diaktifkan agar API bisa diakses Flutter.
