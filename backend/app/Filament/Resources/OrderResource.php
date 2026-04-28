@@ -45,7 +45,6 @@ class OrderResource extends Resource
                     ->required(),
                 DateTimePicker::make('transaction_time')
                     ->label('Waktu Transakasi')
-
                     ->required(),
                 Repeater::make('items')
                     ->relationship()
@@ -177,7 +176,7 @@ class OrderResource extends Resource
                 TextColumn::make("no")->label("No")->rowIndex(),
                 TextColumn::make("customer_name")->label("Nama Customer")->searchable(),
                 TextColumn::make("cashier_name")->label("Nama Kasir"),
-                TextColumn::make("transaction_time")->label("Waktu Transaksi") ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y')),
+                TextColumn::make("transaction_time")->label("Waktu Transaksi")->formatStateUsing(fn($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y')),
                 TextColumn::make("total")->money('Rp.', true)->label("Total"),
                 TextColumn::make("total_payment")->money('Rp.', true)->label("Total Pembayaran"),
                 TextColumn::make("total_item")->label("Total Item"),
