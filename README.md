@@ -36,5 +36,5 @@ Agar **Frontend (Flutter)** dapat terhubung dengan **Backend (Laravel API)**:
 3. Pastikan database sudah dimigrasikan & di-seed sesuai panduan di `backend/README.md`.
 
 Lihat panduan detail pada folder masing-masing:
-- [Frontend README](./Frontend-Mobile/aplikasi_demo_test/README.md)
-- [Backend README](./Backend-Laravel/backend-TA/README.md)
+- [Frontend README](./Frontend/README.md)
+- [Backend README](./Backend/README.md)
