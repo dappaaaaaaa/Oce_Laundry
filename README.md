@@ -1,7 +1,5 @@
-# Aplikasi Kasir Laundry – Tugas Akhir
-Proyek ini merupakan **Aplikasi Kasir Laundry** yang dikembangkan sebagai **Tugas Akhir** di Politeknik Negeri Pontianak.  
-Aplikasi ini dirancang untuk membantu proses operasional laundry, mulai dari pencatatan transaksi, manajemen pelanggan, pembayaran (Cash & QRIS), hingga pencetakan struk dengan printer thermal Bluetooth.
-
+# Aplikasi Kasir Laundry
+Aplikasi manajemen bisnis laundry berbasis digital yang dirancang untuk mengotomatisasi operasional harian, mulai dari manajemen transaksi pelanggan (Point of Sale) hingga pelacakan inventaris stok bahan baku secara real-time.
 
 ## Teknologi yang Digunakan
 - **Frontend**: [Flutter](https://flutter.dev/) (Dart)
