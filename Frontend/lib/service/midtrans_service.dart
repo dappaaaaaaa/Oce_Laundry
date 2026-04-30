@@ -1,8 +1,7 @@
-import 'package:aplikasi_demo_test/utils/variable.dart';
 import 'package:dio/dio.dart';
 
 class MidtransService {
-  static final String _backendBaseUrl = Variable.backendBaseUrl;
+  static const String _backendBaseUrl = "https://qlaundry.web.id/";
 
   // *Iniliasi Dio untuk meminta request dengan backend
   static final Dio dio = Dio(

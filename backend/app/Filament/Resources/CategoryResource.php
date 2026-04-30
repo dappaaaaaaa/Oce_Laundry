@@ -34,8 +34,8 @@ class CategoryResource extends Resource
                     ->required(),
                 TextInput::make("description")
                     ->required(),
-                FileUpload::make('image')
-                    ->directory("category")
+                // FileUpload::make('image')
+                //     ->directory("category")
             ])->columns(1);
     }
 
@@ -45,7 +45,7 @@ class CategoryResource extends Resource
             ->columns([
                 TextColumn::make("name"),
                 TextColumn::make("description"),
-                ImageColumn::make('image'),
+                // ImageColumn::make('image'),
             ])
             ->filters([
                 //

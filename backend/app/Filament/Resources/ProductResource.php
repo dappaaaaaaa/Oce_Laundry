@@ -21,8 +21,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
-    protected static ?string $navigationLabel = 'Produk'; 
-    protected static ?string $pluralLabel = 'Produk'; 
+    protected static ?string $navigationLabel = 'Produk';
+    protected static ?string $pluralLabel = 'Produk';
     protected static ?string $label = 'Produk';
     protected static ?string $navigationGroup = 'Transaksi';
     protected static ?string $navigationIcon = 'heroicon-o-archive-box';
@@ -52,8 +52,9 @@ class ProductResource extends Resource
                     ->default(1)
                     ->selectablePlaceholder(false),
 
-                FileUpload::make('image')
-                    ->directory("category")
+                // FileUpload::make('image')
+                //     ->directory("category")
+                //     ->visibility('public')
             ]);
     }
 
@@ -68,7 +69,7 @@ class ProductResource extends Resource
                     ->money("IDR"),
                 TextColumn::make("status")
                     ->formatStateUsing(fn($state) => $state == 1 ? 'Tersedia' : 'Tidak Tersedia'),
-                ImageColumn::make('image'),
+                // ImageColumn::make('image'),
             ])
             ->filters([
                 //
