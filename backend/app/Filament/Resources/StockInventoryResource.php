@@ -14,7 +14,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-
+use Filament\Forms\Components\Select;
 use function Laravel\Prompts\text;
 
 class StockInventoryResource extends Resource
@@ -35,6 +35,17 @@ class StockInventoryResource extends Resource
                 Forms\Components\TextInput::make('kuantitas')
                     ->numeric()
                     ->required(),
+                Select::make('unit')
+                    ->options([
+                        'Pcs' => 'Pcs',
+                        'Sachet' => 'Sachet',
+                        'Box' => 'Box',
+                        'L' => 'L',
+                        'Ml' => 'Ml',
+                        'Botol' => 'Botol',
+                        'Kg' => 'Kg',
+                    ])->required()
+                    ->native(false),
                 Forms\Components\Textarea::make('keterangan'),
                 Forms\Components\FileUpload::make('image')
                     ->directory("stock")
@@ -54,6 +65,7 @@ class StockInventoryResource extends Resource
             ->columns([
                 TextColumn::make("nama"),
                 TextColumn::make("kuantitas"),
+                TextColumn::make("unit"),
                 TextColumn::make("keterangan"),
                 ImageColumn::make("image")
             ])

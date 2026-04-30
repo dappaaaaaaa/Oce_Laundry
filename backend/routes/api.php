@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\OrderItemController;
 use App\Http\Controllers\Api\OrdersController;
 use App\Http\Controllers\Api\PasswordResetController;
 use App\Http\Controllers\Api\ProductsController;
+use App\Http\Controllers\Api\StockController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -52,4 +53,12 @@ Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
         'status' => true,
         'message' => 'Logout berhasil, token dihapus.',
     ]);
+});
+
+Route::prefix('stock')->group(function () {
+    Route::get('/', [StockController::class, 'index']);
+    Route::get('/{id}', [StockController::class, 'show']);
+    Route::post('/', [StockController::class, 'store']);
+    Route::post('/update/{id}', [StockController::class, 'update']); // cocok untuk form-data + image
+    Route::delete('/{id}', [StockController::class, 'destroy']);
 });

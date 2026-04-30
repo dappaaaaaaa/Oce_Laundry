@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id(); // Ini adalah Primary Key (PK) otomatis
             $table->string('nama');
             $table->integer('kuantitas');
+            $table->text('unit');
             $table->text('keterangan')->nullable();
             $table->string('image')->nullable();
             $table->timestamps();

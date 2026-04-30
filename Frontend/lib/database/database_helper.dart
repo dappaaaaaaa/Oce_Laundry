@@ -83,6 +83,7 @@ class DatabaseHelper {
         total_item INTEGER NOT NULL,
         payment_method TEXT NOT NULL,
         transaction_time INTEGER NOT NULL,
+        transaction_complete_time INTEGER NOT NULL,
         customer_name TEXT NOT NULL,
         phone_number TEXT NOT NULL,
         cashier_name TEXT NOT NULL,

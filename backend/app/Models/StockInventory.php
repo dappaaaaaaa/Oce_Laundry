@@ -16,6 +16,7 @@ class StockInventory extends Model
     protected $fillable = [
         'nama',
         'kuantitas',
+        'unit',
         'keterangan',
         'image',
     ];

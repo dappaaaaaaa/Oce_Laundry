@@ -21,17 +21,23 @@ void main() async {
 
 // * Fungsi untuk meminta izin yang diperlukan
 Future<void> requestPermissions() async {
-  await [
-    Permission.bluetooth,
-    Permission.bluetoothConnect,
-    Permission.bluetoothScan,
-    Permission.location,
-  ].request();
+  final statuses =
+      await [
+        Permission.camera,
+        Permission.photos,
+        Permission.storage,
+        Permission.bluetoothScan,
+        Permission.bluetoothConnect,
+      ].request();
 
-  if (await Permission.bluetoothConnect.isDenied ||
-      await Permission.bluetoothScan.isDenied ||
-      await Permission.location.isDenied) {
-    debugPrint("Beberapa izin penting ditolak!");
+  if (statuses.values.any((status) => status.isDenied)) {
+    debugPrint("Beberapa izin ditolak!");
+  }
+
+  if (statuses.values.any((status) => status.isPermanentlyDenied)) {
+    debugPrint("Izin ditolak permanen, arahkan ke settings");
+
+    await openAppSettings();
   }
 }
 

@@ -2,6 +2,7 @@ import 'package:aplikasi_demo_test/service/auth_service.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:aplikasi_demo_test/view/customer_screen.dart';
 import 'package:aplikasi_demo_test/view/login_screen.dart';
+import 'package:aplikasi_demo_test/view/stock_screen.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
@@ -53,6 +54,7 @@ class _MainwrapperState extends State<Mainwrapper> {
         username: widget.username,
       ),
       CustomerScreen(),
+      StockScreen(),
     ];
   }
 
@@ -154,6 +156,11 @@ class _MainwrapperState extends State<Mainwrapper> {
                   icon: FontAwesome.address_book_solid,
                   isSelected: _selectedIndex == 3,
                   onTap: () => setState(() => _selectedIndex = 3),
+                ),
+                _buildNavItem(
+                  icon: FontAwesome.box_archive_solid,
+                  isSelected: _selectedIndex == 4,
+                  onTap: () => setState(() => _selectedIndex = 4),
                 ),
                 ElevatedButton(
                   onPressed: _confirmLogout,
