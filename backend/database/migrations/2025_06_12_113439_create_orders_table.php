@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer("total_item");
             $table->string("payment_method");
             $table->dateTime("transaction_time");
+            $table->dateTime("transaction_complete_time");
             $table->string("customer_name");
             $table->string("phone_number");
             $table->string("cashier_name");

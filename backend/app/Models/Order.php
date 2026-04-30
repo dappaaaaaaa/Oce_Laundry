@@ -19,6 +19,7 @@ class Order extends Model
             "total_item",
             "payment_method",
             "transaction_time",
+            "transaction_complete_time",
             "customer_name",
             "phone_number",
             "cashier_name",

@@ -107,9 +107,15 @@ class _SettingScreenState extends State<SettingScreen> {
       final originalTransactionTime = DateTime.fromMillisecondsSinceEpoch(
         order['transaction_time'],
       );
+      final completeTransactionTime = DateTime.fromMillisecondsSinceEpoch(
+        order['transaction_complete_time'],
+      );
       final formattedTime = DateFormat(
         'yyyy-MM-dd HH:mm:ss',
       ).format(originalTransactionTime);
+      final formattedCompleteTime = DateFormat(
+        'yyyy-MM-dd HH:mm:ss',
+      ).format(completeTransactionTime);
 
       final orderPayload = {
         'total_payment': order['total_payment'],
@@ -120,6 +126,7 @@ class _SettingScreenState extends State<SettingScreen> {
         'total_item': order['total_item'],
         'payment_method': order['payment_method'],
         'transaction_time': formattedTime,
+        'transaction_complete_time': formattedCompleteTime,
         'customer_name': order['customer_name'],
         'phone_number': order['phone_number'].toString(),
         'cashier_name': order['cashier_name'],
@@ -127,8 +134,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
       try {
         final orderId = await ApiService().postOrder(orderPayload, token);
-        if (orderId == null)
+        if (orderId == null) {
           throw Exception("Gagal mendapatkan ID order dari server");
+        }
 
         for (final item in items) {
           final itemPayload =

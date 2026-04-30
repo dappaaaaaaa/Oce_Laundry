@@ -1094,6 +1094,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                     'payment_method': 1,
                                     'transaction_time':
                                         now.millisecondsSinceEpoch,
+                                    'transaction_complete_time': null,
                                     'customer_name':
                                         _customerNameController.text,
                                     'phone_number': phoneValue ?? 0,
@@ -1141,6 +1142,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                   'payment_method': 2,
                                   'transaction_time':
                                       now.millisecondsSinceEpoch,
+                                  'transaction_complete_time': null,
                                   'customer_name': _customerNameController.text,
                                   'phone_number': phoneValue ?? 0,
                                   'cashier_name': _username,
@@ -1175,6 +1177,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                 'total_item': widget.cart.length,
                                 'payment_method': _paymentMethod,
                                 'transaction_time': now.millisecondsSinceEpoch,
+                                'transaction_complete_time': null,
                                 'customer_name': _customerNameController.text,
                                 'phone_number': phoneValue ?? 0,
                                 'cashier_name': _username,

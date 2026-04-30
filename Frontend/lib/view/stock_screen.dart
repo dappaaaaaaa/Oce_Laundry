@@ -4,6 +4,7 @@ import 'package:aplikasi_demo_test/service/api_service.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:aplikasi_demo_test/utils/capitalize_words_formatter.dart';
 import 'package:aplikasi_demo_test/utils/custom_text_field.dart';
+import 'package:aplikasi_demo_test/utils/search_bar_widget.dart';
 import 'package:aplikasi_demo_test/utils/variable.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,9 @@ class _StockScreenState extends State<StockScreen> {
   bool isFormShow = false;
   File? selectedImage;
   String? existingImage;
+  String? selectedSort;
+  final searchController = SearchController();
+  List<dynamic> filteredList = [];
   final ImagePicker _picker = ImagePicker();
   @override
   void initState() {
@@ -46,6 +50,7 @@ class _StockScreenState extends State<StockScreen> {
 
       setState(() {
         stockList = data;
+        filteredList = data;
         isLoading = false;
       });
     } catch (e) {
@@ -206,6 +211,46 @@ class _StockScreenState extends State<StockScreen> {
     });
   }
 
+  void searchData(String query) {
+    final result =
+        stockList.where((item) {
+          final nama = item['nama'].toString().toLowerCase();
+          return nama.contains(query.toLowerCase());
+        }).toList();
+
+    setState(() {
+      filteredList = result;
+    });
+  }
+
+  void sortData(String value) {
+    setState(() {
+      selectedSort = value;
+
+      if (value == "Nama A-Z") {
+        filteredList.sort(
+          (a, b) => a['nama'].toString().compareTo(b['nama'].toString()),
+        );
+      } else if (value == "Nama Z-A") {
+        filteredList.sort(
+          (a, b) => b['nama'].toString().compareTo(a['nama'].toString()),
+        );
+      } else if (value == "Kuantitas Terbesar") {
+        filteredList.sort(
+          (a, b) => int.parse(
+            b['kuantitas'].toString(),
+          ).compareTo(int.parse(a['kuantitas'].toString())),
+        );
+      } else if (value == "Kuantitas Terkecil") {
+        filteredList.sort(
+          (a, b) => int.parse(
+            a['kuantitas'].toString(),
+          ).compareTo(int.parse(b['kuantitas'].toString())),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -216,9 +261,39 @@ class _StockScreenState extends State<StockScreen> {
             Row(
               children: [
                 SizedBox(
-                  height: 100,
                   width: 960,
-                  child: Center(child: Text("Halaman Stok")),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 300,
+                        child: SearchBarWidget(
+                          controller: searchController,
+                          hintText: "Cari Data Stok",
+                          onChanged: searchData,
+                        ),
+                      ),
+                      Gap(100),
+                      DropdownButton<String>(
+                        dropdownColor: AppColor.backgroundColorPrimary,
+                        value: selectedSort,
+                        hint: Text("Urutkan"),
+                        items:
+                            [
+                              "Nama A-Z",
+                              "Nama Z-A",
+                              "Kuantitas Terbesar",
+                              "Kuantitas Terkecil",
+                            ].map((e) {
+                              return DropdownMenuItem(value: e, child: Text(e));
+                            }).toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            sortData(value);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -248,9 +323,9 @@ class _StockScreenState extends State<StockScreen> {
                                       crossAxisSpacing: 20,
                                       childAspectRatio: 5 / 7.5,
                                     ),
-                                itemCount: stockList.length,
+                                itemCount: filteredList.length,
                                 itemBuilder: (context, index) {
-                                  final item = stockList[index];
+                                  final item = filteredList[index];
                                   return Card(
                                     color: AppColor.backgroundColorSecondry,
                                     elevation: 2,
@@ -289,6 +364,7 @@ class _StockScreenState extends State<StockScreen> {
                                           /// GAMBAR
                                           Center(
                                             child: Image.network(
+                                              
                                               "${Variable.storageBaseUrl}${item['image']}",
                                               width: 110,
                                               height: 110,
@@ -302,7 +378,7 @@ class _StockScreenState extends State<StockScreen> {
                                                   width: 110,
                                                   height: 110,
                                                   fit: BoxFit.cover,
-                                                  "assets/icon/icon.png",
+                                                  "assets/icon/placeholder.png",
                                                 );
                                               },
                                             ),

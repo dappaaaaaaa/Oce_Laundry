@@ -83,7 +83,7 @@ class DatabaseHelper {
         total_item INTEGER NOT NULL,
         payment_method TEXT NOT NULL,
         transaction_time INTEGER NOT NULL,
-        transaction_complete_time INTEGER NOT NULL,
+        transaction_complete_time INTEGER,
         customer_name TEXT NOT NULL,
         phone_number TEXT NOT NULL,
         cashier_name TEXT NOT NULL,
@@ -94,6 +94,13 @@ class DatabaseHelper {
     ''');
       },
     );
+  }
+
+  Future<void> debugOrders() async {
+    final db = await database; // ambil instance db
+
+    var data = await db.query('orders');
+    print(data);
   }
 
   // *Fungsi untuk memasukan produk ke database lokal
@@ -238,12 +245,27 @@ class DatabaseHelper {
   // *Fungsi untuk mengupdate status order
   Future<void> updateOrderStatus(int orderId, int newStatus) async {
     final db = await database;
-    await db.update(
+
+    // ambil data lama
+    final result = await db.query(
       'orders',
-      {'is_order_complete': newStatus},
       where: 'id = ?',
       whereArgs: [orderId],
+      limit: 1,
     );
+
+    if (result.isEmpty) return;
+
+    final order = result.first;
+
+    Map<String, dynamic> data = {'is_order_complete': newStatus};
+
+    // kalau status = 3 (selesai) dan belum ada waktu selesai
+    if (newStatus == 3 && order['transaction_complete_time'] == null) {
+      data['transaction_complete_time'] = DateTime.now().millisecondsSinceEpoch;
+    }
+
+    await db.update('orders', data, where: 'id = ?', whereArgs: [orderId]);
   }
 
   // *Fungsi untuk mendapatkan order berdasarkan ID

@@ -35,6 +35,7 @@ class OrdersController extends Controller
             'total' => 'required|integer',
             'payment_method' => 'required',
             'transaction_time' => 'required|date_format:Y-m-d H:i:s',
+            'transaction_complete_time' => 'required|date_format:Y-m-d H:i:s',
 // pastikan angka (milisecond)
             'customer_name' => 'required|string',
             'cashier_name' => 'required|string',
@@ -59,6 +60,7 @@ class OrdersController extends Controller
             $dataOrders->total_item = $request->total_item ?? 0;
             $dataOrders->payment_method = $request->payment_method;
             $dataOrders->transaction_time = $request->transaction_time;
+            $dataOrders->transaction_complete_time = $request->transaction_complete_time;
             $dataOrders->customer_name = $request->customer_name;
             $dataOrders->phone_number = $request->phone_number ?? 0;
             $dataOrders->cashier_name = $request->cashier_name;
