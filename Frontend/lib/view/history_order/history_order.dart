@@ -8,6 +8,7 @@ import 'package:aplikasi_demo_test/view/history_order/report_status_widget.dart'
 import 'package:aplikasi_demo_test/view/update_payment_screen.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -439,7 +440,7 @@ class HistoryOrderState extends State<HistoryOrder>
                                     child: SingleChildScrollView(
                                       scrollDirection: Axis.vertical,
                                       child: DataTable(
-                                        dataRowMaxHeight: 50,
+                                        dataRowMaxHeight: 60,
                                         dataRowMinHeight: 30,
                                         columnSpacing: 43,
                                         headingRowColor:
@@ -471,13 +472,14 @@ class HistoryOrderState extends State<HistoryOrder>
                                           DataColumn(label: Text('Aksi')),
                                         ],
                                         rows:
-                                            orders.map((order) {
+                                            orders.asMap().entries.map((entry) {
+                                              final index = entry.key;
+                                              final order = entry.value;
+
                                               return DataRow(
                                                 cells: [
                                                   DataCell(
-                                                    Text(
-                                                      order['id'].toString(),
-                                                    ),
+                                                    Text("${index + 1}"),
                                                   ),
                                                   DataCell(
                                                     Text(
@@ -490,10 +492,60 @@ class HistoryOrderState extends State<HistoryOrder>
                                                     ),
                                                   ),
                                                   DataCell(
-                                                    Text(
-                                                      formatTime(
-                                                        order['transaction_time'],
-                                                      ),
+                                                    Column(
+                                                      children: [
+                                                        Gap(5),
+                                                        Text(
+                                                          formatTime(
+                                                            order['transaction_time'],
+                                                          ),
+                                                        ),
+                                                        Gap(5),
+                                                        Container(
+                                                          padding:
+                                                              const EdgeInsets.symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 4,
+                                                              ),
+                                                          decoration: BoxDecoration(
+                                                            color:
+                                                                order['transaction_complete_time'] !=
+                                                                        null
+                                                                    ? Colors
+                                                                        .green
+                                                                        .withOpacity(
+                                                                          0.1,
+                                                                        )
+                                                                    : Colors
+                                                                        .orange
+                                                                        .withOpacity(
+                                                                          0.1,
+                                                                        ),
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  12,
+                                                                ),
+                                                          ),
+                                                          child: Text(
+                                                            order['transaction_complete_time'] !=
+                                                                    null
+                                                                ? "Selesai • ${formatTime(order['transaction_complete_time'])}"
+                                                                : "Diproses",
+                                                            style: TextStyle(
+                                                              color:
+                                                                  order['transaction_complete_time'] !=
+                                                                          null
+                                                                      ? Colors
+                                                                          .green
+                                                                      : Colors
+                                                                          .orange,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                   DataCell(

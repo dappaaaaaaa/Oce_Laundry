@@ -7,6 +7,7 @@ class Order {
   final int total;
   final String paymentMethod;
   final int transactionTime;
+  int? transactionCompleteTime;
   final String customerName;
   final String phoneNumber;
   final String cashierName;
@@ -25,6 +26,7 @@ class Order {
     required this.totalItem,
     required this.paymentMethod,
     required this.transactionTime,
+    this.transactionCompleteTime,
     required this.customerName,
     required this.phoneNumber,
     required this.cashierName,
@@ -47,6 +49,7 @@ class Order {
       'customer_name': customerName,
       'cashier_name': cashierName,
       'is_sync': isSync,
+      'transaction_complete_time': transactionCompleteTime,
     };
   }
 
@@ -64,6 +67,7 @@ class Order {
       cashierName: map['cashier_name'],
       totalItem: map['total_item'],
       phoneNumber: map['phone_number'],
+      transactionCompleteTime: map['transaction_complete_time'],
     );
   }
 }
