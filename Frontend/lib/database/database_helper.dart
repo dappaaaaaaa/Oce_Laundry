@@ -19,7 +19,7 @@ class DatabaseHelper {
 
   // *Fungsi untuk membuat database
   Future<Database> _initDatabase() async {
-      String path = join(await getDatabasesPath(), 'pos_database.db');
+    String path = join(await getDatabasesPath(), 'pos_database.db');
     return await openDatabase(
       path,
       version: 3,

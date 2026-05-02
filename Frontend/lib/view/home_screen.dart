@@ -3,11 +3,13 @@ import 'package:aplikasi_demo_test/database/product.dart';
 import 'package:aplikasi_demo_test/database/database_helper.dart';
 import 'package:aplikasi_demo_test/database/order_item.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
+import 'package:aplikasi_demo_test/utils/search_bar_widget.dart';
 import 'package:aplikasi_demo_test/view/confirm_payment_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 
@@ -25,9 +27,13 @@ class _HomeScreenState extends State<HomeScreen> {
   late Future<List<Product>> _futureProduct = Future.value([]);
   final _formKey = GlobalKey<FormState>();
   String? _selectedCategory;
+  List<dynamic> filteredList = [];
+  List<dynamic> stockList = [];
   List<OrderItem> cart = [];
+  String _searchQuery = '';
   List<Product> allProducts = [];
   List<String> _categories = [];
+  final searchController = SearchController();
   List<String> _selectedCategories = [];
   TextEditingController weightController = TextEditingController();
   String _formattedDateTime = '';
@@ -52,23 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // *Method Mengambil Category
-  Future<void> _loadCategories() async {
-    try {
-      final dbHelper = DatabaseHelper();
-
-      final categories = await dbHelper.getCategories();
-
-      setState(() {
-        _categories = ['All', ...categories];
-        _selectedCategories =
-            _selectedCategory != null ? [_selectedCategory!] : ['All'];
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Error saat memuat kategori: $e');
-      }
-    }
-  }
 
   Future<void> _startDateTimeUpdater() async {
     _timer = Timer.periodic(Duration(seconds: 0), (_) {
@@ -245,27 +234,60 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void searchData(String query) {
+    setState(() {
+      _searchQuery = query;
+    });
+
+    _loadProducts();
+  }
+
   // * Method Ambil Produk Dari Database
   Future<void> _loadProducts() async {
     final db = DatabaseHelper();
 
     final semuaProductList = await db.getAllProducts();
 
-    List<Product> filteredList;
+    List<Product> filteredList = semuaProductList;
 
-    if (_selectedCategory == null || _selectedCategory == 'All') {
-      filteredList = semuaProductList;
-    } else {
+    // Filter kategori
+    if (_selectedCategory != null && _selectedCategory != 'All') {
       filteredList =
-          semuaProductList
-              .where((b) => b.category == _selectedCategory)
-              .toList();
+          filteredList.where((b) => b.category == _selectedCategory).toList();
+    }
+
+    // Filter search
+    if (_searchQuery.isNotEmpty) {
+      filteredList =
+          filteredList.where((product) {
+            return product.productName.toLowerCase().contains(
+              _searchQuery.toLowerCase(),
+            );
+          }).toList();
     }
 
     setState(() {
       allProducts = semuaProductList;
       _futureProduct = Future.value(filteredList);
     });
+  }
+
+  Future<void> _loadCategories() async {
+    try {
+      final dbHelper = DatabaseHelper();
+
+      final categories = await dbHelper.getCategories();
+
+      setState(() {
+        _categories = ['All', ...categories];
+        _selectedCategories =
+            _selectedCategory != null ? [_selectedCategory!] : ['All'];
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('Error saat memuat kategori: $e');
+      }
+    }
   }
 
   // * Method Refresh Data
@@ -321,7 +343,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   _selectedCategories = ['All'];
                   _selectedCategory = 'All';
                 });
+
                 _loadProducts();
+
                 Navigator.pop(context);
               },
             ),
@@ -335,9 +359,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() {
                   _selectedCategories = tempSelected;
                   _selectedCategory =
-                      tempSelected.isNotEmpty ? tempSelected.first : null;
-                  _loadProducts();
+                      tempSelected.isNotEmpty ? tempSelected.first : 'All';
                 });
+
+                _loadProducts();
+
                 Navigator.pop(context);
               },
             ),
@@ -515,29 +541,47 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           SizedBox(height: 40),
-                          ElevatedButton.icon(
-                            iconAlignment: IconAlignment.start,
-                            icon: Icon(Icons.filter_alt_rounded, size: 18),
-                            label: Text(
-                              "Filter: $_selectedCategory",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                          Row(
+                            children: [
+                              ElevatedButton.icon(
+                                iconAlignment: IconAlignment.start,
+                                icon: Icon(Icons.filter_alt_rounded, size: 18),
+                                label: Text(
+                                  "Filter: $_selectedCategory",
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                onPressed:
+                                    () => _showCategoryFilterDialog(context),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColor.primary,
+                                  foregroundColor: Colors.white,
+                                  elevation: 2,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                    vertical: 10.h,
+                                  ),
+                                ),
                               ),
-                            ),
-                            onPressed: () => _showCategoryFilterDialog(context),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColor.primary,
-                              foregroundColor: Colors.white,
-                              elevation: 2,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+
+                              Gap(10),
+
+                              Expanded(
+                                child: SearchBarWidget(
+                                  controller: searchController,
+                                  hintText: "Cari Barang",
+                                  onChanged: (value) {
+                                    searchData(value);
+                                  },
+                                ),
                               ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 10.h,
-                              ),
-                            ),
+                            ],
                           ),
 
                           SizedBox(height: 20),
@@ -547,9 +591,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               builder: (context, snapshot) {
                                 if (snapshot.connectionState ==
                                     ConnectionState.waiting) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
+                                  return const Center(child: Text("data"));
                                 }
                                 if (snapshot.hasError) {
                                   return Center(
@@ -560,7 +602,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 if (products.isEmpty) {
                                   return const Center(
-                                    child: Text('Belum ada produk'),
+                                    child: Text('Tidak Ada Produk'),
                                   );
                                 }
                                 return RefreshIndicator(
