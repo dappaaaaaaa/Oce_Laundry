@@ -265,6 +265,7 @@ class _StockScreenState extends State<StockScreen> {
                                             mainAxisAlignment:
                                                 MainAxisAlignment.end,
                                             children: [
+
                                               IconButton(
                                                 onPressed: () async {
                                                   updateData(item);
@@ -289,7 +290,7 @@ class _StockScreenState extends State<StockScreen> {
                                           /// GAMBAR
                                           Center(
                                             child: Image.network(
-                                              "${Variable.storageBaseUrl}${item['image']}",
+                                              "http://192.168.18.14:8000/storage/${item['image']}",
                                               width: 110,
                                               height: 110,
                                               fit: BoxFit.cover,
