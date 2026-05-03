@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:aplikasi_demo_test/utils/variable.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:aplikasi_demo_test/database/user.dart';
@@ -8,6 +5,7 @@ import 'auth_service.dart';
 import 'package:dio_http_formatter/dio_http_formatter.dart';
 
 class ApiService {
+  static const String baseUrl = 'https://qlaundry.web.id/api';
   final Dio dio;
   late String message;
   static final String baseUrl = Variable.baseUrl;
@@ -57,6 +55,116 @@ class ApiService {
       return data.map((json) => User.fromJson(json)).toList();
     } catch (e) {
       throw Exception('Gagal fetch data: $e');
+    }
+  }
+
+  Future<List<dynamic>> getStocks() async {
+    try {
+      final response = await dio.get("$baseUrl/stock/");
+
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      }
+
+      return [];
+    } catch (e) {
+      throw Exception("Gagal mengambil data: $e");
+    }
+  }
+
+  /// =========================
+  /// GET DETAIL BY ID
+  /// =========================
+  Future<Map<String, dynamic>?> getStockById(int id) async {
+    try {
+      final response = await dio.get("$baseUrl/$id");
+
+      if (response.statusCode == 200) {
+        return response.data['data'];
+      }
+
+      return null;
+    } catch (e) {
+      throw Exception("Gagal mengambil detail data: $e");
+    }
+  }
+
+  /// =========================
+  /// POST / CREATE
+  /// =========================
+  Future<bool> createStock({
+    required String nama,
+    required int kuantitas,
+    required String unit,
+    String? keterangan,
+    File? image,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "nama": nama,
+        "kuantitas": kuantitas,
+        "unit": unit,
+        "keterangan": keterangan,
+        if (image != null)
+          "image": await MultipartFile.fromFile(
+            image.path,
+            filename: image.path.split('/').last,
+          ),
+      });
+
+      final response = await dio.post("$baseUrl/stock/", data: formData);
+
+      return response.statusCode == 201;
+    } catch (e) {
+      throw Exception("Gagal menambahkan data: $e");
+    }
+  }
+
+  /// =========================
+  /// UPDATE DATA
+  /// =========================
+  Future<bool> updateStock({
+    required int id,
+    required String nama,
+    required int kuantitas,
+    required String unit,
+    String? keterangan,
+    File? image,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "nama": nama,
+        "kuantitas": kuantitas,
+        "keterangan": keterangan,
+        "unit": unit,
+        if (image != null)
+          "image": await MultipartFile.fromFile(
+            image.path,
+            filename: image.path.split('/').last,
+          ),
+      });
+
+      final response = await dio.post(
+        "$baseUrl/stock/update/$id",
+        data: formData,
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception("Gagal update data: $e");
+    }
+  }
+
+  /// =========================
+  /// DELETE DATA
+  /// =========================
+  Future<bool> deleteStock(int id) async {
+    try {
+      final response = await dio.delete("$baseUrl/stock/$id");
+
+      return response.statusCode == 200;
+    } catch (e) {
+      throw Exception("Gagal menghapus data: $e");
     }
   }
 
