@@ -365,8 +365,6 @@ class _StockScreenState extends State<StockScreen> {
                                           /// GAMBAR
                                           Center(
                                             child: Image.network(
-                                              "http://192.168.18.14:8000/storage/${item['image']}",
-                                              
                                               "${Variable.storageBaseUrl}${item['image']}",
                                               width: 110,
                                               height: 110,

@@ -1,14 +1,14 @@
 class Customer {
   final int id;
   final String customerName;
-  final String phoneNumber;
-  final String address;
+  final String? phoneNumber;
+  final String? address;
 
   Customer({
     required this.id,
     required this.customerName,
-    required this.phoneNumber,
-    required this.address,
+    this.phoneNumber,
+    this.address,
   });
 
   Map<String, dynamic> toMap() {

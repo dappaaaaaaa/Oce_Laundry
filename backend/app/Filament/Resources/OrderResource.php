@@ -40,14 +40,12 @@ class OrderResource extends Resource
                     ->label('Nama Customer')
                     ->required(),
                 TextInput::make('phone_number')
-                    ->label('No. HP')
-                    ->default(0)
-                    ->required(),
+                    ->label('No. HP'),
                 DateTimePicker::make('transaction_time')
                     ->label('Waktu Transakasi')
                     ->required(),
                 DateTimePicker::make('transaction_complete_time')
-                    ->label('Waktu Transakasi Selesa')
+                    ->label('Waktu Transakasi Selesai')
                     ->required(),
                 Repeater::make('items')
                     ->relationship()
@@ -102,7 +100,7 @@ class OrderResource extends Resource
                         self::recalculateTotals($set, $get);
                     }),
                 TextInput::make('total_item')
-                    ->label('Totla Item')
+                    ->label('Total Item')
                     ->numeric()
                     ->disabled()
                     ->dehydrated()

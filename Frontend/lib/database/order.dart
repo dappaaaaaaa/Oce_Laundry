@@ -9,7 +9,7 @@ class Order {
   final int transactionTime;
   int? transactionCompleteTime;
   final String customerName;
-  final String phoneNumber;
+  String? phoneNumber;
   final String cashierName;
   final int totalItem;
   final int isSync;
@@ -28,7 +28,7 @@ class Order {
     required this.transactionTime,
     this.transactionCompleteTime,
     required this.customerName,
-    required this.phoneNumber,
+    this.phoneNumber,
     required this.cashierName,
     this.isSync = 0,
     this.isOrderComplete = 0,
@@ -47,9 +47,13 @@ class Order {
       'payment_method': paymentMethod,
       'transaction_time': transactionTime,
       'customer_name': customerName,
+      'phone_number': phoneNumber,
       'cashier_name': cashierName,
       'is_sync': isSync,
       'transaction_complete_time': transactionCompleteTime,
+      // Jika butuh simpan status complete juga:
+      'is_order_complete': isOrderComplete,
+      'is_payment_complete': isPaymentComplete,
     };
   }
 

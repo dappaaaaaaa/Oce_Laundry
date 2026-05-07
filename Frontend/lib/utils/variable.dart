@@ -1,7 +1,7 @@
 class Variable {
-  static const String ip = "192.168.18.14";
+  static const String urlWeb = "http://192.168.4.160:8000";
 
-  static String get baseUrl => "http://$ip:8000/api";
-  static String get backendBaseUrl => "http://$ip:8000/";
-  static String get storageBaseUrl => "http://$ip:8000/storage/";
+  static String get baseUrl => "$urlWeb/api";
+  static String get backendBaseUrl => "$urlWeb/";
+  static String get storageBaseUrl => "$urlWeb/storage/";
 }

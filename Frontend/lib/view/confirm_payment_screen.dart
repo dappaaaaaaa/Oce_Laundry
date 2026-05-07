@@ -1023,16 +1023,16 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                 hasError = true;
                               }
 
-                              if (_phoneNumberController.text.isEmpty ||
-                                  phoneValue == null) {
-                                phoneError = "Nomor Hp Tidak Boleh kosong";
-                                hasError = true;
-                              } else if (_phoneNumberController.text.length <
-                                      10 ||
-                                  _phoneNumberController.text.length > 14) {
-                                phoneError = "Nomor HP harus 10–14 digit";
-                                hasError = true;
-                              }
+                              // if (_phoneNumberController.text.isEmpty ||
+                              //     phoneValue == null) {
+                              //   phoneError = "Nomor Hp Tidak Boleh kosong";
+                              //   hasError = true;
+                              // } else if (_phoneNumberController.text.length <
+                              //         10 ||
+                              //     _phoneNumberController.text.length > 14) {
+                              //   phoneError = "Nomor HP harus 10–14 digit";
+                              //   hasError = true;
+                              // }
 
                               if (_paymentMethod == 0) {
                                 if (_totalPayment.text.isEmpty ||
