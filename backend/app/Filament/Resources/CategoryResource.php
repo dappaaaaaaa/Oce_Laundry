@@ -33,7 +33,7 @@ class CategoryResource extends Resource
                 TextInput::make("name")
                     ->required(),
                 TextInput::make("description")
-                    ->required(),
+                    ,
                 // FileUpload::make('image')
                 //     ->directory("category")
             ])->columns(1);

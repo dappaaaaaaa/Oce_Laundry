@@ -1,3 +1,4 @@
+import 'package:aplikasi_demo_test/database/order.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:aplikasi_demo_test/utils/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import '../database/database_helper.dart';
 import 'midtrans_payment_screen.dart';
 
 class UpdatePaymentScreen extends StatefulWidget {
-  final Map<String, dynamic> orderData;
+  final Order orderData;
 
   const UpdatePaymentScreen({super.key, required this.orderData});
 
@@ -27,8 +28,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
   // * Fungsi untuk mengelola proses pembayaran berdasarkan metode yang dipilih
   Future<void> _handlePayment() async {
     final db = DatabaseHelper();
-    final total =
-        widget.orderData['total'] - widget.orderData['total_payment'] as int;
+    final total = widget.orderData.total - widget.orderData.totalPayment;
 
     final inputText = _paymentController.text.replaceAll(RegExp(r'[^0-9]'), '');
     final totalInput = int.tryParse(inputText) ?? 0;
@@ -40,21 +40,16 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
           builder:
               (_) => MidtransPaymentScreen(
                 amount: total,
-                customerName: widget.orderData['customer_name'],
-                customerPhone: widget.orderData['phone_number'],
+                customerName: widget.orderData.customerName,
+                customerPhone: widget.orderData.phoneNumber.toString(),
               ),
         ),
       );
 
       // * Memeriksa apakah pembayaran berhasil
       if (result == true) {
-        final updatedPayment = widget.orderData['total_payment'] + total;
-        await db.updateOrderPayment(
-          widget.orderData['id'],
-          updatedPayment,
-          1,
-          1,
-        );
+        final updatedPayment = widget.orderData.totalPayment + total;
+        await db.updateOrderPayment(widget.orderData.id, updatedPayment, 1, 1);
         if (!mounted) return;
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -71,8 +66,8 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
         return;
       }
 
-      final updatedPayment = widget.orderData['total_payment'] + totalInput;
-      await db.updateOrderPayment(widget.orderData['id'], updatedPayment, 1, 0);
+      final updatedPayment = widget.orderData.totalPayment + totalInput;
+      await db.updateOrderPayment(widget.orderData.id, updatedPayment, 1, 0);
       if (!mounted) return;
       Navigator.pop(context, true);
       ScaffoldMessenger.of(
@@ -83,8 +78,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final total =
-        widget.orderData['total'] - widget.orderData['total_payment'] as int;
+    final total = widget.orderData.total - widget.orderData.totalPayment;
     final formatter = NumberFormat.currency(
       locale: 'id_ID',
       symbol: 'Rp ',
@@ -113,7 +107,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Nama: ${widget.orderData['customer_name']}"),
+                    Text("Nama: ${widget.orderData.customerName}"),
                     Text("Total Sisa Pembayaran: ${formatter.format(total)}"),
                     const SizedBox(height: 20),
                     SizedBox(

@@ -1,3 +1,4 @@
+import 'package:aplikasi_demo_test/database/order.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
@@ -26,35 +27,48 @@ String generateOrderNumber(DateTime transactionDate, int orderId) {
 
 // *Fungsi untuk mencetak struk laundry menggunakan printer thermal Bluetooth
 Future<void> cetakStrukLaundryEscPos({
-  required Map<String, dynamic> order,
+  required Order order,
   required List<Map<String, dynamic>> items,
 }) async {
   final bool isConnected = await PrintBluetoothThermal.connectionStatus;
+
   if (!isConnected) {
     print("Printer belum terhubung.");
     return;
   }
-  final transactionDate = DateTime.fromMillisecondsSinceEpoch(
-    order['transaction_time'],
-  );
-  final paymentStatus = order['is_payment_complete'].toString();
-  final orderNumber = generateOrderNumber(transactionDate, order['id']);
+
+  // parse tanggal
+  final transactionDate = DateTime.parse(order.transactionTime.toString());
+
+  final orderNumber = generateOrderNumber(transactionDate, order.id);
+
   final profile = await CapabilityProfile.load();
+
   final generator = Generator(PaperSize.mm58, profile);
+
   List<int> bytes = [];
 
+  // payment method
   final paymentMethod = () {
-    switch (order['payment_method'].toString()) {
+    switch (order.paymentMethod.toString()) {
       case '0':
         return 'Cash';
+
       case '1':
         return 'QRIS';
+
       case '2':
-        return '';
+        return 'Belum Lunas';
+
       default:
         return 'Tidak diketahui';
     }
   }();
+
+  // =========================
+  // HEADER
+  // =========================
+
   bytes += generator.text(
     'QLaundry',
     styles: PosStyles(
@@ -65,18 +79,21 @@ Future<void> cetakStrukLaundryEscPos({
     ),
     linesAfter: 1,
   );
+
   bytes += generator.text(
-    'Jl. Tani, Bukit Batu Singkawang\nTelp: 0895-3283-64478',
+    'Jl. Tani, Bukit Batu Singkawang\n'
+    'Telp: 0895-3283-64478',
     styles: PosStyles(align: PosAlign.center),
   );
+
   bytes += generator.hr();
 
+  // =========================
+  // INFO ORDER
+  // =========================
+
   bytes += generator.row([
-    PosColumn(
-      text: "No. Pemesanan",
-      width: 6,
-      styles: PosStyles(align: PosAlign.left),
-    ),
+    PosColumn(text: "No. Pemesanan", width: 6),
     PosColumn(
       text: orderNumber,
       width: 6,
@@ -85,15 +102,9 @@ Future<void> cetakStrukLaundryEscPos({
   ]);
 
   bytes += generator.row([
+    PosColumn(text: "Tanggal", width: 6),
     PosColumn(
-      text: "Tanggal",
-      width: 6,
-      styles: PosStyles(align: PosAlign.left),
-    ),
-    PosColumn(
-      text: DateFormat('dd/MM/yyyy').format(
-        DateTime.fromMillisecondsSinceEpoch(order['transaction_time'] ?? 0),
-      ),
+      text: DateFormat('dd/MM/yyyy').format(transactionDate),
       width: 6,
       styles: PosStyles(align: PosAlign.right),
     ),
@@ -102,16 +113,7 @@ Future<void> cetakStrukLaundryEscPos({
   bytes += generator.row([
     PosColumn(text: "Pelanggan", width: 6),
     PosColumn(
-      text: (order['customer_name'] ?? '').toString(),
-      width: 6,
-      styles: PosStyles(align: PosAlign.right),
-    ),
-  ]);
-
-  bytes += generator.row([
-    PosColumn(text: "No. HP", width: 6),
-    PosColumn(
-      text: "0${order['phone_number'] ?? ''}",
+      text: order.customerName,
       width: 6,
       styles: PosStyles(align: PosAlign.right),
     ),
@@ -120,7 +122,7 @@ Future<void> cetakStrukLaundryEscPos({
   bytes += generator.row([
     PosColumn(text: "Kasir", width: 6),
     PosColumn(
-      text: (order['cashier_name'] ?? '').toString(),
+      text: order.cashierName,
       width: 6,
       styles: PosStyles(align: PosAlign.right),
     ),
@@ -128,13 +130,21 @@ Future<void> cetakStrukLaundryEscPos({
 
   bytes += generator.hr();
 
-  for (var item in items) {
+  // =========================
+  // ITEM
+  // =========================
+
+  for (final item in items) {
     final String name = item['product_name'] ?? '';
+
     final num weight = item['weight'] ?? 0;
+
     final num price = item['price'] ?? 0;
+
     final num total = weight * price;
 
     bytes += generator.text(name, styles: PosStyles(align: PosAlign.left));
+
     bytes += generator.row([
       PosColumn(text: '$weight Kg X ${formatNumber(price)}', width: 6),
       PosColumn(
@@ -147,43 +157,49 @@ Future<void> cetakStrukLaundryEscPos({
 
   bytes += generator.hr();
 
+  // =========================
+  // TOTAL
+  // =========================
+
   bytes += generator.row([
     PosColumn(text: "QTY", width: 6),
     PosColumn(
-      text: (order['total_item'] ?? 0).toString(),
+      text: order.totalItem.toString(),
       width: 6,
       styles: PosStyles(align: PosAlign.right),
     ),
   ]);
+
   bytes += generator.row([
     PosColumn(text: "Sub total", width: 6),
     PosColumn(
-      text: formatCurrency(order['sub_total'] ?? 0),
+      text: formatCurrency(order.subTotal),
       width: 6,
       styles: PosStyles(align: PosAlign.right),
     ),
   ]);
+
   bytes += generator.row([
-    PosColumn(text: "Total", width: 6, styles: PosStyles()),
+    PosColumn(text: "Total", width: 6),
     PosColumn(
-      text: formatCurrency(order['total'] ?? 0),
+      text: formatCurrency(order.total),
       width: 6,
       styles: PosStyles(align: PosAlign.right),
     ),
   ]);
+
   bytes += generator.row([
     PosColumn(text: "BAYAR ($paymentMethod)", width: 6),
     PosColumn(
-      text: formatCurrency(order['total_payment'] ?? 0),
+      text: formatCurrency(order.totalPayment),
       width: 6,
       styles: PosStyles(align: PosAlign.right),
     ),
   ]);
-  final int total = order['total'] ?? 0;
-  final int bayar = order['total_payment'] ?? 0;
-  final int kembalian = bayar - total;
 
-  if (paymentStatus == '1') {
+  final int kembalian = order.totalPayment - order.total;
+
+  if (order.isPaymentComplete == 1) {
     bytes += generator.row([
       PosColumn(text: "Kembalian", width: 6),
       PosColumn(
@@ -192,12 +208,15 @@ Future<void> cetakStrukLaundryEscPos({
         styles: PosStyles(align: PosAlign.right),
       ),
     ]);
-  } else {}
+  }
 
   bytes += generator.hr();
+
   bytes += generator.feed(1);
+
   bytes += generator.text(
-    'Terima kasih telah menggunakan\njasa laundry kami.',
+    'Terima kasih telah menggunakan\n'
+    'jasa laundry kami.',
     styles: PosStyles(align: PosAlign.center),
     linesAfter: 2,
   );

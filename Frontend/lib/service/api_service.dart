@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:aplikasi_demo_test/database/order.dart';
 import 'package:aplikasi_demo_test/utils/variable.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,17 +50,6 @@ class ApiService {
     dio.interceptors.add(HttpFormatter());
   }
 
-  // *Menambil data user dari API
-  Future<List<User>> getUsers() async {
-    try {
-      final response = await dio.get('/users');
-      final data = response.data['data'] as List;
-      return data.map((json) => User.fromJson(json)).toList();
-    } catch (e) {
-      throw Exception('Gagal fetch data: $e');
-    }
-  }
-
   Future<List<dynamic>> getStocks() async {
     try {
       final response = await dio.get("$baseUrl/stock/");
@@ -74,26 +64,6 @@ class ApiService {
     }
   }
 
-  /// =========================
-  /// GET DETAIL BY ID
-  /// =========================
-  Future<Map<String, dynamic>?> getStockById(int id) async {
-    try {
-      final response = await dio.get("$baseUrl/$id");
-
-      if (response.statusCode == 200) {
-        return response.data['data'];
-      }
-
-      return null;
-    } catch (e) {
-      throw Exception("Gagal mengambil detail data: $e");
-    }
-  }
-
-  /// =========================
-  /// POST / CREATE
-  /// =========================
   Future<bool> createStock({
     required String nama,
     required int kuantitas,
@@ -122,9 +92,6 @@ class ApiService {
     }
   }
 
-  /// =========================
-  /// UPDATE DATA
-  /// =========================
   Future<bool> updateStock({
     required int id,
     required String nama,
@@ -157,9 +124,6 @@ class ApiService {
     }
   }
 
-  /// =========================
-  /// DELETE DATA
-  /// =========================
   Future<bool> deleteStock(int id) async {
     try {
       final response = await dio.delete("$baseUrl/stock/$id");
@@ -243,48 +207,6 @@ class ApiService {
       throw Exception(
         'Gagal memuat data: ${e.response?.statusCode} - ${e.message}',
       );
-    }
-  }
-
-  // *Fungsi untuk mengirim data order item ke API
-  Future<bool> syncOrderAndItems({
-    required Map<String, dynamic> order,
-    required List<Map<String, dynamic>> items,
-    required String token,
-  }) async {
-    try {
-      final orderResponse = await dio.post(
-        '/orders',
-        data: order,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-
-      if (orderResponse.statusCode != 200 && orderResponse.statusCode != 201) {
-        print('Gagal simpan order: ${orderResponse.data}');
-        return false;
-      }
-
-      final orderId = orderResponse.data['id'];
-
-      for (final item in items) {
-        final itemWithOrder = {...item, 'order_id': orderId};
-
-        final itemResponse = await dio.post(
-          '/orderItem',
-          data: itemWithOrder,
-          options: Options(headers: {'Authorization': 'Bearer $token'}),
-        );
-
-        if (itemResponse.statusCode != 200 && itemResponse.statusCode != 201) {
-          print('Gagal simpan item: ${itemResponse.data}');
-          return false;
-        }
-      }
-
-      return true;
-    } on DioException catch (e) {
-      print('Sync error: ${e.response?.data ?? e.message}');
-      return false;
     }
   }
 
@@ -395,10 +317,132 @@ class ApiService {
     }
   }
 
+  Future<List<Order>> getOrders(String? token) async {
+    try {
+      final response = await dio.get(
+        '/orders',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
 
+      final List data = response.data['data'];
 
-  /// =========================
-  /// GET DETAIL BY ID
-  /// =========================
+      return data.map((e) => Order.fromMap(e)).toList();
+    } on DioException catch (e) {
+      print(e.response?.data);
 
+      return [];
+    }
+  }
+
+  Future<bool> updateOrderStatus(
+    int orderId,
+    int newStatus,
+    String? token,
+  ) async {
+    try {
+      final response = await dio.put(
+        '/orders/$orderId/status',
+        data: {'is_order_complete': newStatus},
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      return response.statusCode == 200;
+    } on DioException {
+      return false;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getOrderItemDetailsWithProduct(
+    int orderId,
+    String? token,
+  ) async {
+    try {
+      final response = await dio.get(
+        '/orders/$orderId/items',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      final List data = response.data['data'];
+
+      return data.map((e) => Map<String, dynamic>.from(e)).toList();
+    } on DioException {
+      return [];
+    }
+  }
+
+  Future<Order?> getOrderById(int id, String? token) async {
+    try {
+      final response = await dio.get(
+        '/orders/$id',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      return Order.fromMap(response.data['data']);
+    } on DioException {
+      return null;
+    }
+  }
+
+  Future<Map<int, int>> getJumlahOrderPerStatus(String? token) async {
+    try {
+      final response = await dio.get(
+        '/orders/count/status',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      final List<dynamic> data = response.data['data'];
+
+      final Map<int, int> result = {};
+
+      for (int i = 0; i < data.length; i++) {
+        result[i] = data[i] as int;
+      }
+
+      return result;
+    } on DioException {
+      return {};
+    }
+  }
+
+  Future<bool> deleteOrderItem(int id, String? token) async {
+    try {
+      await dio.delete(
+        '/order-items/$id',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      return true;
+    } on DioException catch (e) {
+      print(e.response?.data);
+      return false;
+    }
+  }
+
+  Future<bool> deleteOrder(int id, String? token) async {
+    try {
+      await dio.delete(
+        '/orders/$id',
+        options: Options(
+          headers: {if (token != null) 'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      return true;
+    } on DioException catch (e) {
+      print(e.response?.data);
+      return false;
+    }
+  }
 }

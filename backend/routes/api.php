@@ -36,16 +36,27 @@ Route::get('users', [UserController::class, 'index']);
 Route::get('users/{id}', [UserController::class, 'show']);
 
 Route::post('/login', [AuthController::class, 'login']);
-
 Route::post('/password-reset/request', [PasswordResetController::class, 'requestReset']);
 Route::get('/password-reset/status', [PasswordResetController::class, 'checkStatus']);
-Route::post('/password-reset/change', [PasswordResetController::class, 'changePassword']); 
+Route::post('/password-reset/change', [PasswordResetController::class, 'changePassword']);
 
 Route::middleware('auth:sanctum')->get('/barang', [ProductsController::class, 'index']);
 
+Route::middleware('auth:sanctum')->get('/orders/{id}', [OrdersController::class, 'show']);
 Route::middleware('auth:sanctum')->post('/orderItem', [OrderItemController::class, 'store']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::delete('/order-items/{id}', [OrderItemController::class, 'destroy']);
+});
 Route::middleware('auth:sanctum')->post('/orders', [OrdersController::class, 'store']);
-
+Route::middleware('auth:sanctum')->get('/orders', [OrdersController::class, 'index']);
+Route::middleware('auth:sanctum')->put('/orders/{id}/status', [OrdersController::class, 'updateStatus']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::delete('/orders/{id}', [OrdersController::class, 'destroy']);
+});
+Route::middleware('auth:sanctum')->get(
+    '/orders/count/status',
+    [OrdersController::class, 'countByStatus']
+);
 Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
     $request->user()->currentAccessToken()->delete();
 
@@ -54,7 +65,10 @@ Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
         'message' => 'Logout berhasil, token dihapus.',
     ]);
 });
-
+Route::middleware('auth:sanctum')->get(
+    '/orders/{id}/items',
+    [OrdersController::class, 'getOrderItems']
+);
 Route::prefix('stock')->group(function () {
     Route::get('/', [StockController::class, 'index']);
     Route::get('/{id}', [StockController::class, 'show']);

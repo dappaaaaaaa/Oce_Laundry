@@ -76,6 +76,30 @@ class OrderItemController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+
+            $orderItem = OrderItem::find($id);
+
+            if (!$orderItem) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Order item tidak ditemukan',
+                ], 404);
+            }
+
+            $orderItem->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Order item berhasil dihapus',
+            ], 200);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Gagal menghapus order item: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

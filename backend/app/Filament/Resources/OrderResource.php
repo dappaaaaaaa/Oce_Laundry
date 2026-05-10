@@ -182,6 +182,16 @@ class OrderResource extends Resource
                 TextColumn::make("total")->money('Rp.', true)->label("Total"),
                 TextColumn::make("total_payment")->money('Rp.', true)->label("Total Pembayaran"),
                 TextColumn::make("total_item")->label("Total Item"),
+                TextColumn::make("updated_at")->label("Terakhir di Update")->formatStateUsing(fn($state) => \Carbon\Carbon::parse($state)->translatedFormat('l, d F Y h:i:s')),
+                TextColumn::make("is_order_complete")
+                ->formatStateUsing(fn($state) => match ((int) $state) {
+                        0 => 'Antrian',
+                        1 => 'Proses',
+                        2 => 'Siap Diambil',
+                        3 => 'selesai',
+                        default => 'Tidak Diketahui',
+                    })
+                    ->label("Status Pesanan"),
                 TextColumn::make("payment_method")
                     ->formatStateUsing(fn($state) => match ((int) $state) {
                         0 => 'Cash',
@@ -190,6 +200,7 @@ class OrderResource extends Resource
                         default => 'Tidak Diketahui',
                     })
                     ->label("Metode Pembayaran"),
+
 
             ])
 

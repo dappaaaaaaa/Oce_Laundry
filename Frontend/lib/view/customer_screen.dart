@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:aplikasi_demo_test/database/database_helper.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:aplikasi_demo_test/utils/capitalize_words_formatter.dart';
@@ -331,7 +333,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                         ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Nomor Telepon tidak boleh kosong';
+                                        return null;
                                       }
                                       if (value.length < 10) {
                                         return "Nomor Tidak boleh Kurang dari 10";

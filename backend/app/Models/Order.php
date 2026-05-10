@@ -23,6 +23,8 @@ class Order extends Model
             "customer_name",
             "phone_number",
             "cashier_name",
+            "is_order_complete",
+            "is_payment_complete"
     ];
 
     public function items()

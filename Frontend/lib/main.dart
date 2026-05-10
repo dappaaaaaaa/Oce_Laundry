@@ -1,6 +1,7 @@
 import 'package:aplikasi_demo_test/service/auth_service.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -49,25 +50,32 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Oce Laundry POS ',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: AppColor.backgroundColorPrimary,
+    return ScreenUtilInit(
+      designSize: Size(1920, 1200),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Oce Laundry POS ',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+            scaffoldBackgroundColor: AppColor.backgroundColorPrimary,
 
-        // * Menggunakan Google Fonts untuk tema teks
-        textTheme: GoogleFonts.poppinsTextTheme().apply(
-          bodyColor: Colors.black,
-          displayColor: AppColor.primary,
-        ),
-      ),
+            // * Menggunakan Google Fonts untuk tema teks
+            textTheme: GoogleFonts.poppinsTextTheme().apply(
+              bodyColor: Colors.black,
+              displayColor: AppColor.primary,
+            ),
+          ),
 
-      // * Menentukan halaman awal berdasarkan status login
-      home:
-          isLoggedIn && userId != null
-              ? NavigationScreen(userId: userId!)
-              : LoginScreen(),
+          // * Menentukan halaman awal berdasarkan status login
+          home:
+              isLoggedIn && userId != null
+                  ? NavigationScreen(userId: userId!)
+                  : LoginScreen(),
+        );
+      },
     );
   }
 }

@@ -1,14 +1,16 @@
+import 'package:aplikasi_demo_test/database/order.dart';
 import 'package:intl/intl.dart';
 
 String generateOrderMessageText({
-  required Map<String, dynamic> order,
+  required Order order,
   required List<Map<String, dynamic>> items,
   required String status,
 }) {
   String divider = "--" * 15;
-  String formatTime(int millis) {
-    final dt = DateTime.fromMillisecondsSinceEpoch(millis);
-    return DateFormat('dd/MM/yyyy HH:mm').format(dt);
+  String formatTime(String datetime) {
+    final date = DateTime.parse(datetime);
+
+    return DateFormat('dd/MM/yyyy HH:mm').format(date);
   }
 
   // * Fungsi untuk menentukan waktu berdasarkan jam saat ini
@@ -28,8 +30,12 @@ String generateOrderMessageText({
   // * Fungsi untuk menghasilkan nomor pemesanan berdasarkan tanggal transaksi dan ID order
   String generateOrderNumber(DateTime transactionDate, int orderId) {
     final datePart =
-        '${transactionDate.year.toString().substring(2)}${transactionDate.day.toString().padLeft(2, '0')}${transactionDate.month.toString().padLeft(2, '0')}';
+        '${transactionDate.year.toString().substring(2)}'
+        '${transactionDate.day.toString().padLeft(2, '0')}'
+        '${transactionDate.month.toString().padLeft(2, '0')}';
+
     final idPart = orderId.toString().padLeft(3, '0');
+
     return '$datePart$idPart';
   }
 
@@ -57,15 +63,15 @@ String generateOrderMessageText({
     '2': 'Siap diambil',
     '3': 'Selesai',
   };
-  final transactionDate = DateTime.fromMillisecondsSinceEpoch(
-    order['transaction_time'],
+
+  final orderNumber = generateOrderNumber(
+    DateTime.parse(order.transactionTime.toString()),
+    order.id,
   );
-  final orderId = order['id'] as int;
-  final orderNumber = generateOrderNumber(transactionDate, orderId);
-  final paymentStatus = order['is_payment_complete'].toString();
-  final status = statusMap[order['is_order_complete'].toString()] ?? 'Unknown';
+  final paymentStatus = order.isPaymentComplete.toString();
+  final status = statusMap[order.isOrderComplete.toString()] ?? 'Unknown';
   final metodePembayaran = () {
-    switch (order['payment_method'].toString()) {
+    switch (order.paymentMethod.toString()) {
       case '0':
         return 'Cash';
       case '1':
@@ -77,20 +83,20 @@ String generateOrderMessageText({
     }
   }();
 
-  final total = order['total'] ?? 0;
-  final bayar = order['total_payment'] ?? 0;
+  final total = order.total;
+  final bayar = order.totalPayment;
   final kembalian = bayar - total;
 
-  if (status == 'Antrian') {
+  if (status == 'Antrian' || status == 'Diproses') {
     final buffer = StringBuffer();
     buffer.writeln('Qlaundry');
     buffer.writeln('Jl. Tani, Bukit Batu Singkawang');
     buffer.writeln(divider);
     buffer.writeln('No Pemesanan: *${breakDigits(orderNumber)}*');
-    buffer.writeln('Tanggal: ${formatTime(order['transaction_time'])}');
-    buffer.writeln('Nama Pelanggan: ${order['customer_name']}');
-    buffer.writeln('Nomor HP: 0${breakDigits(order['phone_number'])}');
-    buffer.writeln('Kasir: ${order['cashier_name']}');
+    buffer.writeln('Tanggal: ${formatTime(order.transactionTime)}');
+    buffer.writeln('Nama Pelanggan: ${order.customerName}');
+    buffer.writeln('Nomor HP: 0${breakDigits(order.phoneNumber.toString())}');
+    buffer.writeln('Kasir: ${order.cashierName}');
     buffer.writeln('Metode Pembayaran: *$metodePembayaran*');
     buffer.writeln(divider);
     buffer.writeln('Daftar Produk:');
@@ -102,8 +108,8 @@ String generateOrderMessageText({
       );
     }
     buffer.writeln(divider);
-    buffer.writeln("QTY: ${order['total_item']}");
-    buffer.writeln('Subtotal: ${formatCurrency(order['sub_total'])}');
+    buffer.writeln("QTY: ${order.totalItem}");
+    buffer.writeln('Subtotal: ${formatCurrency(order.subTotal)}');
     buffer.writeln('Total: ${formatCurrency(total)}');
     buffer.writeln('Bayar: ${formatCurrency(bayar)}');
     if (paymentStatus == '1') {
@@ -117,7 +123,7 @@ String generateOrderMessageText({
     return buffer.toString();
   } else if (status == 'Siap diambil') {
     return '''
-Selamat ${generateTime()} ${order['customer_name']}
+Selamat ${generateTime()} ${order.customerName}
 Laundry anda dengan nomor Pemesanan *${breakDigits(orderNumber)}* 
 Sudah selesai dan sudah bisa diambil\n
 Terima kasih telah menggunakan layanan kami!

@@ -38,7 +38,7 @@ class ProductResource extends Resource
                 TextInput::make("name")
                     ->required(),
                 TextInput::make("description")
-                    ->required(),
+                    ,
                 TextInput::make("price")
                     ->required()
                     ->integer()

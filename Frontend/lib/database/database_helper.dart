@@ -52,7 +52,7 @@ class DatabaseHelper {
           CREATE TABLE customers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             customer_name TEXT NOT NULL,
-            phone_number TEXT NOT NULL,
+            phone_number TEXT,
             address TEXT NOT NULL
           );
           ''');
@@ -85,7 +85,7 @@ class DatabaseHelper {
         transaction_time INTEGER NOT NULL,
         transaction_complete_time INTEGER,
         customer_name TEXT NOT NULL,
-        phone_number TEXT NOT NULL,
+        phone_number TEXT,
         cashier_name TEXT NOT NULL,
         is_sync INTEGER NOT NULL DEFAULT 0,
         is_order_complete INTEGER NOT NULL DEFAULT 0,

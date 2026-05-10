@@ -1,8 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:aplikasi_demo_test/service/api_service.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:aplikasi_demo_test/view/setting_screen/screens/setting_content.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:choice/choice.dart';

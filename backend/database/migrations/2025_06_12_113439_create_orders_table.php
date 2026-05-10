@@ -21,10 +21,12 @@ return new class extends Migration
             $table->integer("total_item");
             $table->string("payment_method");
             $table->dateTime("transaction_time");
-            $table->dateTime("transaction_complete_time");
+            $table->dateTime("transaction_complete_time")->nullable();
             $table->string("customer_name");
-            $table->string("phone_number");
+            $table->string("phone_number")->nullable()->default(0);
             $table->string("cashier_name");
+            $table->boolean("is_order_complete");
+            $table->boolean("is_payment_complete");
             $table->timestamps();
             $table->softDeletes();
         });
