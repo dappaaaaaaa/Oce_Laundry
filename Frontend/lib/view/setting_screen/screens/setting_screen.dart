@@ -4,6 +4,7 @@ import 'package:aplikasi_demo_test/service/api_service.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:aplikasi_demo_test/view/setting_screen/screens/setting_content.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:choice/choice.dart';
@@ -12,13 +13,9 @@ import '../../../database/database_helper.dart';
 import '../../../service/auth_service.dart';
 
 class SettingScreen extends StatefulWidget {
-
   final VoidCallback onSyncSuccess;
 
-  const SettingScreen({
-    super.key,
-    required this.onSyncSuccess,
-  });
+  const SettingScreen({super.key, required this.onSyncSuccess});
 
   @override
   State<SettingScreen> createState() => _SettingScreenState();
@@ -27,11 +24,7 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   bool _isSyncing = false;
   bool isLoading = false;
-  List<String> choices = [
-    'Kelola Printer',
-    'Kelola Pajak & Diskon',
-    'Sinkroniasi',
-  ];
+  List<String> choices = ['Kelola Printer', 'Sinkroniasi'];
   List<Icon> icon = [
     Icon(Icons.print_rounded),
     Icon(Icons.attach_money_rounded),
@@ -233,8 +226,8 @@ class _SettingScreenState extends State<SettingScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(
-                    width: 300,
-                    height: 700,
+                    width: 500.w,
+                    height: 700.h,
                     child: Choice<String>.inline(
                       clearable: false,
                       value: ChoiceSingle.value(selectedValue),
@@ -243,9 +236,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       itemBuilder: (state, index) {
                         return SizedBox(
                           width: double.infinity,
-                          height: 100,
+                          height: 110.h,
                           child: ChoiceChip(
-                            labelPadding: EdgeInsets.zero,
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
+                            labelStyle: const TextStyle(height: 1),
                             materialTapTargetSize:
                                 MaterialTapTargetSize
                                     .shrinkWrap, // Reduces extra space
@@ -255,24 +249,34 @@ class _SettingScreenState extends State<SettingScreen> {
                               ),
                               side: BorderSide.none,
                             ),
-                            visualDensity: VisualDensity(
-                              horizontal: 0,
-                              vertical: 0,
-                            ),
+                            visualDensity: VisualDensity.compact,
                             elevation: 1,
-                            label: Align(
-                              alignment: Alignment.centerLeft,
+                            label: Center(
                               child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.max,
                                 children: [
-                                  Text(
-                                    choices[index],
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
+                                  Expanded(
+                                    child: Text(
+                                      choices[index],
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 30.sp,
+                                        height: 1,
+                                      ),
                                     ),
                                   ),
-                                  SizedBox(width: 10),
-                                  icon[index],
+
+                                  IconTheme(
+                                    data: IconThemeData(
+                                      size: 60.sp,
+                                      color: Colors.black87,
+                                    ),
+                                    child: icon[index],
+                                  ),
                                 ],
                               ),
                             ),

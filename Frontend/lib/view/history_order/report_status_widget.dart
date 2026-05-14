@@ -1,5 +1,6 @@
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class StatusOrderWidget extends StatelessWidget {
   final int status;
@@ -18,8 +19,8 @@ class StatusOrderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 90,
-      width: 140,
+      height: 120.h,
+      width: 250.w,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -31,12 +32,12 @@ class StatusOrderWidget extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 16, color: Colors.black),
+            style: const TextStyle(fontSize: 12, color: Colors.black),
           ),
           const SizedBox(height: 10),
           Text(
             jumlah.toString(),
-            style: const TextStyle(fontSize: 32, color: Colors.black),
+            style: const TextStyle(fontSize: 24, color: Colors.black),
           ),
         ],
       ),

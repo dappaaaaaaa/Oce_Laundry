@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:aplikasi_demo_test/service/printer_service.dart';
@@ -98,7 +100,14 @@ class _PrinterContentState extends State<PrinterContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Pengaturan Printer"),
+        title: Text(
+          "Pengaturan Printer",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 50.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         backgroundColor: AppColor.backgroundColorPrimary,
         actions: [
           _infoBluetooth,
@@ -128,8 +137,8 @@ class _PrinterContentState extends State<PrinterContent> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    maximumSize: Size(200, 50),
-                    minimumSize: Size(190, 40),
+                    maximumSize: Size(215, 50),
+                    minimumSize: Size(215, 40),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -140,9 +149,15 @@ class _PrinterContentState extends State<PrinterContent> {
                           size: 15,
                         ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(_progress ? _msjprogress : "Cari"),
+                          Text(
+                            _progress ? _msjprogress : "Cari",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30.sp,
+                            ),
+                          ),
                           SizedBox(width: 5),
                           Icon(_progress ? null : Icons.search),
                         ],
@@ -150,7 +165,7 @@ class _PrinterContentState extends State<PrinterContent> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: connected ? _disconnect : null,
                   style: OutlinedButton.styleFrom(
@@ -160,16 +175,17 @@ class _PrinterContentState extends State<PrinterContent> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    maximumSize: Size(240, 50),
-                    minimumSize: Size(220, 40),
+                    maximumSize: Size(215, 50),
+                    minimumSize: Size(215, 40),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
                         "Putuskan Sambungan",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(color: Colors.white, fontSize: 30.sp),
                       ),
+                      Gap(8),
                       Icon(Icons.link_off, color: Colors.white),
                     ],
                   ),

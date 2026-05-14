@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomTextFieldStyle {
   // * Fungsi untuk membuat InputDecoration dengan style khusus
@@ -45,7 +46,7 @@ class CustomTextFieldStyle {
   }
 
   static TextStyle textStyle() {
-    return const TextStyle(fontSize: 16, color: Colors.black);
+    return TextStyle(fontSize: 30.sp, color: Colors.black);
   }
 }
 

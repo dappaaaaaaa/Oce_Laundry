@@ -156,80 +156,97 @@ class _CustomerScreenState extends State<CustomerScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                SizedBox(
-                  // height: 300,
-                  width: 450,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SearchBarWidget(
-                        controller: _searchBarController,
-                        onChanged: _filterCustomers,
-                      ),
-                      Gap(16),
-                      Text("Daftar Pelanggan", style: TextStyle(fontSize: 24)),
-
-                      SizedBox(height: 30),
-                      Expanded(
-                        child:
-                            _filteredCustomers.isEmpty
-                                ? const Center(
-                                  child: Text("Tidak Ada data Pelanggan"),
-                                )
-                                : ListView.builder(
-                                  itemCount: _filteredCustomers.length,
-                                  itemBuilder: (context, index) {
-                                    final cust = _filteredCustomers[index];
-                                    return Card(
-                                      color: const Color.fromRGBO(
-                                        245,
-                                        250,
-                                        253,
-                                        1,
-                                      ),
-                                      elevation: 3,
-                                      child: ListTile(
-                                        title: Text(
-                                          "Nama: ${cust['customer_name']}",
+                Expanded(
+                  child: SizedBox(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SearchBarWidget(
+                          controller: _searchBarController,
+                          onChanged: _filterCustomers,
+                        ),
+                        Gap(10),
+                        Text(
+                          "Daftar Pelanggan",
+                          style: TextStyle(fontSize: 50.sp),
+                        ),
+                        Gap(10),
+                        Expanded(
+                          child:
+                              _filteredCustomers.isEmpty
+                                  ? const Center(
+                                    child: Text("Tidak Ada data Pelanggan"),
+                                  )
+                                  : ListView.builder(
+                                    itemCount: _filteredCustomers.length,
+                                    itemBuilder: (context, index) {
+                                      final cust = _filteredCustomers[index];
+                                      return Card(
+                                        color: const Color.fromRGBO(
+                                          245,
+                                          250,
+                                          253,
+                                          1,
                                         ),
-                                        leading: const Icon(Icons.person),
-                                        subtitle: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "No hp: ${cust['phone_number']}",
-                                            ),
-                                            Text("Alamat: ${cust['address']}"),
-                                          ],
-                                        ),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                              onPressed:
-                                                  () => _showDeleteDialog(cust),
-                                              icon: const Icon(
-                                                FontAwesome.trash_solid,
-                                                color: Colors.red,
+                                        elevation: 3,
+                                        child: ListTile(
+                                          title: Text(
+                                            "Nama: ${cust['customer_name']}",
+                                            style: TextStyle(fontSize: 30.sp),
+                                          ),
+                                          leading: const Icon(
+                                            Icons.person,
+                                            size: 20,
+                                          ),
+                                          subtitle: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "No hp: ${cust['phone_number']}",
+                                                style: TextStyle(
+                                                  fontSize: 30.sp,
+                                                ),
                                               ),
-                                            ),
-                                            IconButton(
-                                              onPressed:
-                                                  () => _editCustomer(cust),
-                                              icon: const Icon(
-                                                BoxIcons.bx_edit,
-                                                color: Colors.orange,
+                                              Text(
+                                                "Alamat: ${cust['address']}",
+                                                style: TextStyle(
+                                                  fontSize: 30.sp,
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                onPressed:
+                                                    () =>
+                                                        _showDeleteDialog(cust),
+                                                icon: const Icon(
+                                                  size: 20,
+                                                  FontAwesome.trash_solid,
+                                                  color: Colors.red,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                onPressed:
+                                                    () => _editCustomer(cust),
+                                                icon: const Icon(
+                                                  size: 20,
+                                                  BoxIcons.bx_edit,
+                                                  color: Colors.orange,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                      ),
-                    ],
+                                      );
+                                    },
+                                  ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -237,8 +254,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                 SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: SizedBox(
-                    // height: 300,
-                    width: 450,
+                    width: 750.w,
 
                     // * Form untuk menambahkan atau memperbarui data pelanggan
                     child: Column(
@@ -267,13 +283,13 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                   "Tambahkan Pelanggan Baru",
                                   style: TextStyle(
                                     color: Colors.white,
-                                    fontSize: 18,
+                                    fontSize: 32.sp,
                                   ),
                                 ),
                                 Icon(
                                   Bootstrap.person_plus_fill,
                                   color: Colors.white,
-                                  size: 24,
+                                  size: 20,
                                 ),
                               ],
                             ),
@@ -295,12 +311,16 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(height: 20),
-                                  Text("Nama Customer"),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    "Nama Customer",
+                                    style: TextStyle(fontSize: 30.sp),
+                                  ),
                                   SizedBox(height: 10),
                                   TextFormField(
                                     controller: _customerNameController,
                                     keyboardType: TextInputType.name,
+                                    style: TextStyle(fontSize: 30.sp),
                                     inputFormatters: [
                                       CapitalizeWordsFormatter(),
                                     ],
@@ -317,9 +337,13 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                     },
                                   ),
                                   SizedBox(height: 20),
-                                  Text("Nomor Telepon Customer"),
+                                  Text(
+                                    "Nomor Telepon Customer",
+                                    style: TextStyle(fontSize: 30.sp),
+                                  ),
                                   SizedBox(height: 10),
                                   TextFormField(
+                                    style: TextStyle(fontSize: 30.sp),
                                     controller: _customerPhoneNumberController,
                                     keyboardType: TextInputType.phone,
                                     inputFormatters: [
@@ -342,10 +366,14 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                       return null;
                                     },
                                   ),
-                                  SizedBox(height: 20),
-                                  Text("Alamat Customer"),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    "Alamat Customer",
+                                    style: TextStyle(fontSize: 30.sp),
+                                  ),
                                   SizedBox(height: 10),
                                   TextFormField(
+                                    style: TextStyle(fontSize: 30.sp),
                                     controller: _customerAddressController,
                                     keyboardType: TextInputType.streetAddress,
                                     maxLines: 3,
@@ -354,15 +382,8 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                           icon: Icon(Icons.home),
                                           hintText: "Masukan Alamat Customer",
                                         ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Alamat tidak boleh kosong';
-                                      }
-
-                                      return null;
-                                    },
                                   ),
-                                  SizedBox(height: 20),
+                                  SizedBox(height: 10),
 
                                   Row(
                                     mainAxisAlignment:
@@ -387,12 +408,13 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                               12,
                                             ),
                                           ),
-                                          minimumSize: Size(210, 60),
+                                          minimumSize: Size(210.w, 80.h),
                                         ),
 
                                         child: Text(
                                           "Batal",
                                           style: TextStyle(
+                                            fontSize: 32.sp,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -420,7 +442,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                               12,
                                             ),
                                           ),
-                                          minimumSize: Size(210, 60),
+                                          minimumSize: Size(210.w, 80.h),
                                         ),
 
                                         child: Text(
@@ -428,6 +450,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                               ? "Perbarui Data Pelanggan"
                                               : "Buat Data Pelanggan",
                                           style: TextStyle(
+                                            fontSize: 32.sp,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
                                           ),

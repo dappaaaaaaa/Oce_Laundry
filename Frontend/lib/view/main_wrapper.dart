@@ -5,6 +5,7 @@ import 'package:aplikasi_demo_test/view/login_screen.dart';
 import 'package:aplikasi_demo_test/view/stock_screen.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:icons_plus/icons_plus.dart';
 import '../service/api_service.dart';
 import 'home_screen.dart';
@@ -101,13 +102,13 @@ class _MainwrapperState extends State<Mainwrapper> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 65,
-        height: 65,
+        width: 120.w,
+        height: 90.h,
         decoration: BoxDecoration(
           color: isSelected ? const Color(0xFF486471) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: Colors.white, size: 30),
+        child: Icon(icon, color: Colors.white, size: 24),
       ),
     );
   }
@@ -121,7 +122,7 @@ class _MainwrapperState extends State<Mainwrapper> {
       body: Row(
         children: [
           Container(
-            width: 120,
+            width: 160.w,
             color: const Color.fromRGBO(36, 70, 82, 1.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

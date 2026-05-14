@@ -21,6 +21,13 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
   @override
   Widget build(BuildContext context) {
     return SearchBar(
+      elevation: WidgetStatePropertyAll(0),
+      shape: WidgetStatePropertyAll(
+        RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(8),
+          side: BorderSide(color: Colors.black),
+        ),
+      ),
       controller: widget.controller,
       padding: const WidgetStatePropertyAll<EdgeInsets>(
         EdgeInsets.symmetric(horizontal: 16.0),
@@ -29,9 +36,10 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
       backgroundColor: WidgetStatePropertyAll<Color>(
         AppColor.backgroundColorSecondry,
       ),
+      hintStyle: WidgetStatePropertyAll<TextStyle>(TextStyle(fontSize: 12)),
       hintText: widget.hintText, // pakai dari parameter
       onChanged: widget.onChanged,
-      leading: const Icon(Icons.search),
+      leading: const Icon(Icons.search, size: 16),
     );
   }
 }

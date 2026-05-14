@@ -331,7 +331,6 @@ class HistoryOrderState extends State<HistoryOrder>
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SizedBox(
-          height: 400,
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -460,6 +459,7 @@ class HistoryOrderState extends State<HistoryOrder>
 
   Future<void> showDateFilterDialog(BuildContext context) async {
     PickerDateRange? tempRange;
+    int? tempStatus = selectedStatus;
 
     if (selectedDateRange != null) {
       tempRange = PickerDateRange(
@@ -474,25 +474,126 @@ class HistoryOrderState extends State<HistoryOrder>
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
+              actionsPadding: EdgeInsets.symmetric(vertical: 20),
+              actionsOverflowButtonSpacing: 2,
               backgroundColor: AppColor.backgroundColorPrimary,
 
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [Text("Filter Tanggal"), Text("Filter status")],
+
+              title: Text(
+                "Filter Transaksi",
+                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
               ),
+
               content: SizedBox(
-                width: 400,
-                height: 400,
+                width: 800.w,
+                height: 1200.h,
+
                 child: Column(
                   children: [
-                    Expanded(
+                    SizedBox(
+                      height: 80.h,
+                      child: DropdownButtonFormField<int?>(
+                        value: tempStatus,
+
+                        dropdownColor: AppColor.backgroundColorPrimary,
+                        style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(fontSize: 22.sp),
+                          labelText: "Status Pesanan",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+
+                        items: [
+                          const DropdownMenuItem(
+                            value: null,
+                            child: Text("Semua"),
+                          ),
+
+                          DropdownMenuItem(
+                            value: 0,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  FontAwesome.clock_solid,
+                                  color: Colors.orange,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 10),
+                                const Text("Antrian"),
+                              ],
+                            ),
+                          ),
+
+                          DropdownMenuItem(
+                            value: 1,
+                            child: Row(
+                              children: [
+                                Icon(Icons.work, color: Colors.blue, size: 18),
+                                const SizedBox(width: 10),
+                                const Text("Proses"),
+                              ],
+                            ),
+                          ),
+
+                          DropdownMenuItem(
+                            value: 2,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.shopping_bag,
+                                  color: Colors.purple,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 10),
+                                const Text("Siap Diambil"),
+                              ],
+                            ),
+                          ),
+
+                          DropdownMenuItem(
+                            value: 3,
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.check_circle,
+                                  color: Colors.green,
+                                  size: 18,
+                                ),
+                                const SizedBox(width: 10),
+                                const Text("Selesai"),
+                              ],
+                            ),
+                          ),
+                        ],
+
+                        onChanged: (value) {
+                          setDialogState(() {
+                            tempStatus = value;
+                          });
+                        },
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    SizedBox(
+                      height: 340.h,
                       child: SfDateRangePicker(
+                        viewSpacing: 20,
+
+                        showActionButtons: false,
                         view: DateRangePickerView.month,
+                        selectionShape: DateRangePickerSelectionShape.rectangle,
                         headerStyle: DateRangePickerHeaderStyle(
-                          textStyle: TextStyle(color: Colors.white),
+                          textStyle: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26.sp,
+                          ),
                           backgroundColor: AppColor.primary,
                           textAlign: TextAlign.center,
                         ),
@@ -502,9 +603,7 @@ class HistoryOrderState extends State<HistoryOrder>
                             ),
                         selectionMode: DateRangePickerSelectionMode.range,
                         backgroundColor: AppColor.backgroundColorPrimary,
-                        enableMultiView: true,
                         initialSelectedRange: tempRange,
-
                         onSelectionChanged: (args) {
                           setDialogState(() {
                             tempRange = args.value;
@@ -512,48 +611,59 @@ class HistoryOrderState extends State<HistoryOrder>
                         },
                       ),
                     ),
-                    const SizedBox(height: 12),
+
                     if (tempRange != null)
-                      Text(
-                        "${tempRange!.startDate?.day}/${tempRange!.startDate?.month}/${tempRange!.startDate?.year}"
-                        " - "
-                        "${tempRange!.endDate?.day}/${tempRange!.endDate?.month}/${tempRange!.endDate?.year}",
+                      SizedBox(
+                        height: 30,
+                        child: Text(
+                          "${tempRange!.startDate?.day}/${tempRange!.startDate?.month}/${tempRange!.startDate?.year}"
+                          " - "
+                          "${tempRange!.endDate?.day}/${tempRange!.endDate?.month}/${tempRange!.endDate?.year}",
+                        ),
                       ),
                   ],
                 ),
               ),
+
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-
                   child: const Text("Batal"),
                 ),
+
                 TextButton(
                   onPressed: () {
                     setState(() {
+                      searchQuery = '';
+                      selectedStatus = null;
                       selectedDateRange = null;
                     });
+
                     filterOrders();
+
                     Navigator.pop(context);
                   },
                   child: const Text("Reset"),
                 ),
-                ElevatedButton(
+
+                TextButton(
                   onPressed: () {
-                    if (tempRange != null &&
-                        tempRange!.startDate != null &&
-                        tempRange!.endDate != null) {
-                      setState(() {
+                    setState(() {
+                      selectedStatus = tempStatus;
+
+                      if (tempRange != null &&
+                          tempRange!.startDate != null &&
+                          tempRange!.endDate != null) {
                         selectedDateRange = DateTimeRange(
                           start: tempRange!.startDate!,
                           end: tempRange!.endDate!,
                         );
-                      });
+                      }
+                    });
 
-                      filterOrders();
-                    }
+                    filterOrders();
 
                     Navigator.pop(context);
                   },
@@ -579,17 +689,72 @@ class HistoryOrderState extends State<HistoryOrder>
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Riwayat Penjualan", style: TextStyle(fontSize: 24)),
-                  Text(
-                    formatted,
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.grey,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Riwayat Penjualan",
+                              style: TextStyle(fontSize: 42.sp),
+                            ),
+                            Text(
+                              formatted,
+                              style: TextStyle(
+                                fontSize: 36.sp,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 600.w,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll<Color>(
+                                  AppColor.backgroundColorSecondry,
+                                ),
+                              ),
+                              onPressed: () async {
+                                await showDateFilterDialog(context);
+                              },
+
+                              icon: const Icon(Icons.date_range),
+                            ),
+                            Gap(1),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  height: 70.h,
+                                  child: SearchBarWidget(
+                                    hintText: "Cari Transaksi",
+                                    controller: searchController,
+                                    onChanged: (value) {
+                                      searchQuery = value;
+
+                                      filterOrders();
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+
+                  Gap(10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -619,98 +784,8 @@ class HistoryOrderState extends State<HistoryOrder>
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  Row(
-                    children: [
-                      DropdownButton<int?>(
-                        dropdownColor: AppColor.backgroundColorPrimary,
-                        value: selectedStatus,
-                        hint: const Text("Semua Status"),
-                        items: [
-                          DropdownMenuItem(value: null, child: Text("Semua")),
-                          DropdownMenuItem(
-                            value: 0,
-                            child: orderStatusRow(
-                              icon: FontAwesome.clock_solid,
-                              color: Colors.orange,
-                              text: "Antrian",
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 1,
-                            child: orderStatusRow(
-                              icon: Icons.work,
-                              color: Colors.blue,
-                              text: "Proses",
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 2,
-                            child: orderStatusRow(
-                              icon: Icons.shopping_bag,
-                              color: Colors.purple,
-                              text: "Siap Diambil",
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: 3,
-                            child: orderStatusRow(
-                              icon: Icons.check_circle,
-                              color: Colors.green,
-                              text: "Selesai",
-                            ),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          selectedStatus = value;
+                  SizedBox(height: 5),
 
-                          filterOrders();
-                        },
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          await showDateFilterDialog(context);
-                        },
-
-                        icon: const Icon(Icons.date_range),
-
-                        label: Text(
-                          selectedDateRange == null
-                              ? "Filter Tanggal"
-                              : "${selectedDateRange!.start.day}/${selectedDateRange!.start.month}"
-                                  " - "
-                                  "${selectedDateRange!.end.day}/${selectedDateRange!.end.month}",
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          searchQuery = '';
-
-                          selectedStatus = null;
-
-                          selectedDateRange = null;
-
-                          filterOrders();
-                        },
-
-                        child: const Text("Reset Filter"),
-                      ),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: SizedBox(
-                          width: 500.w,
-                          child: SearchBarWidget(
-                            controller: searchController,
-                            onChanged: (value) {
-                              searchQuery = value;
-
-                              filterOrders();
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                   Expanded(
                     child: FutureBuilder<List<Order>>(
                       future: _futureOrders,
@@ -766,15 +841,15 @@ class HistoryOrderState extends State<HistoryOrder>
                                 DataColumn2(
                                   label: Center(child: Text('Tanggal & Waktu')),
                                   size: ColumnSize.L,
-                                  minWidth: 500.w,
+                                  minWidth: 600.w,
                                 ),
                                 DataColumn2(
                                   label: Center(child: Text('Status Pesanan')),
-                                  minWidth: 250.w,
+                                  minWidth: 400.w,
                                 ),
                                 DataColumn2(
                                   label: Center(child: Text('Aksi')),
-                                  minWidth: 480.w,
+                                  minWidth: 500.w,
                                 ),
                               ],
                               rows:
@@ -804,8 +879,8 @@ class HistoryOrderState extends State<HistoryOrder>
                                                   width:
                                                       order.transactionCompleteTime !=
                                                               null
-                                                          ? 400.w
-                                                          : 200.w,
+                                                          ? 600.w
+                                                          : 250.w,
                                                   padding:
                                                       const EdgeInsets.symmetric(
                                                         horizontal: 10,

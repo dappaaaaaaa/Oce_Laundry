@@ -10,10 +10,8 @@ import 'package:aplikasi_demo_test/utils/search_bar_widget.dart';
 import 'package:aplikasi_demo_test/view/confirm_payment_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -136,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                minimumSize: Size(120.w, 40.h),
+                minimumSize: Size(120.w, 70.h),
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
@@ -366,6 +364,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                minimumSize: Size(120.w, 70.h),
                 backgroundColor: AppColor.primary,
                 foregroundColor: Colors.white,
               ),
@@ -539,34 +541,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Selamat Datang ${user?['username'] ?? ''}"),
+                    Text(
+                      "Selamat Datang ${user?['username'] ?? ''}",
+                      style: TextStyle(fontSize: 40.sp),
+                    ),
                     Text(
                       _formattedDateTime,
                       style: TextStyle(
-                        fontSize: 28.sp,
+                        fontSize: 32.sp,
                         fontWeight: FontWeight.normal,
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(height: 100.h),
+                    SizedBox(height: 30.h),
                     Row(
                       children: [
                         ElevatedButton.icon(
                           iconAlignment: IconAlignment.start,
-                          icon: Icon(Icons.filter_alt_rounded, size: 40.w),
+                          icon: Icon(Icons.filter_alt_rounded, size: 32.w),
                           label: Text(
                             "Filter: $_selectedCategory",
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 30.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: TextStyle(fontSize: 30.sp),
                           ),
                           onPressed: () => _showCategoryFilterDialog(context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColor.primary,
                             foregroundColor: Colors.white,
-                            minimumSize: Size(200.w, 80.h),
+                            minimumSize: Size(250.w, 80.h),
                             elevation: 2,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -577,16 +579,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-
-                        Gap(30),
-
+                        Gap(10),
                         Expanded(
-                          child: SearchBarWidget(
-                            controller: searchController,
-                            hintText: "Cari Barang",
-                            onChanged: (value) {
-                              searchData(value);
-                            },
+                          child: SizedBox(
+                            height: 80.h,
+                            child: SearchBarWidget(
+                              controller: searchController,
+                              hintText: "Cari Produk",
+                              onChanged: (value) {
+                                searchData(value);
+                              },
+                            ),
                           ),
                         ),
                       ],
@@ -637,8 +640,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: AppColor.backgroundColorPrimary,
                                     elevation: 4,
                                     margin: const EdgeInsets.symmetric(
-                                      vertical: 8,
-                                      horizontal: 14,
+                                      vertical: 2,
+                                      horizontal: 6,
                                     ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(10),
@@ -652,13 +655,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Center(
                                             child: Image.asset(
                                               "assets/icon/placeholder.png",
-                                              scale: 28,
+                                              scale: 32,
                                             ),
                                           ),
                                           SizedBox(height: 20.h),
                                           Text(
                                             product.productName,
-                                            style: TextStyle(fontSize: 30.sp),
+                                            style: TextStyle(fontSize: 28.sp),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
                                           ),
                                           SizedBox(height: 5.h),
                                           Row(
@@ -689,7 +694,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               gridDelegate:
                                   const SliverGridDelegateWithFixedCrossAxisCount(
-                                    childAspectRatio: 3 / 3,
+                                    childAspectRatio: 5 / 6,
                                     crossAxisCount: 3,
                                   ),
                             ),
@@ -711,17 +716,47 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text("Nama Produk"),
-                          Text("Berat"),
-                          Text("Harga"),
+                        children: [
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              "Nama Produk",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24.sp,
+                              ),
+                            ),
+                          ),
+
+                          Expanded(
+                            flex: 2,
+                            child: Center(
+                              child: Text(
+                                "Berat",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24.sp,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "Harga",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24.sp,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 12),
                       // *Bagian Kanan
                       SizedBox(
-                        height: 400.h,
+                        height: 350.h,
                         child: ListView.builder(
                           itemCount: cart.length,
                           itemBuilder: (context, index) {
@@ -748,10 +783,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: 8.0,
+                                      vertical: 4.0,
                                     ),
                                     child: Container(
-                                      height: 30,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 4.h,
+                                      ),
                                       alignment: Alignment.center,
                                       child: Dismissible(
                                         key: Key(item.productId.toString()),
@@ -760,7 +797,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                             cart.removeAt(index);
                                           });
                                         },
-
                                         background: Container(
                                           color: Color(0xFFE55151),
                                           alignment: Alignment.centerRight,
@@ -773,31 +809,41 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                              CrossAxisAlignment.start,
                                           children: [
                                             Expanded(
                                               flex: 3,
-                                              child: Text(product.productName),
+                                              child: Text(
+                                                product.productName,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: TextStyle(
+                                                  fontSize: 28.sp,
+                                                ),
+                                              ),
                                             ),
+
                                             Expanded(
                                               flex: 2,
                                               child: Center(
                                                 child: Text(
                                                   "${item.weight}Kg",
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
+                                                  style: TextStyle(
+                                                    fontSize: 28.sp,
                                                   ),
                                                 ),
                                               ),
                                             ),
+
                                             Expanded(
                                               flex: 2,
                                               child: Text(
                                                 formatCurrency(priceTotal),
                                                 textAlign: TextAlign.right,
+                                                style: TextStyle(
+                                                  fontSize: 28.sp,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -811,132 +857,90 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
-                      SizedBox(
-                        width: 200.w,
-                        child: Column(
-                          children: [
-                            if (cart.isNotEmpty)
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  IconButton(
-                                    onPressed: () {
-                                      showTaxDialog();
-                                    },
-                                    icon: Icon(
-                                      BoxIcons.bxs_badge_dollar,
-                                      color: Colors.white,
-                                      size: 26,
-                                    ),
-                                    style: OutlinedButton.styleFrom(
-                                      backgroundColor: AppColor.primary,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(40),
-                                      ),
-                                      maximumSize: Size(45, 45),
-                                      minimumSize: (Size(45, 45)),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {
-                                      showDiscountDialog();
-                                    },
-                                    icon: Icon(
-                                      Bootstrap.tags_fill,
-                                      color: Colors.white,
-                                    ),
-                                    style: OutlinedButton.styleFrom(
-                                      backgroundColor: AppColor.primary,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(45),
-                                      ),
-                                      maximumSize: Size(45, 45),
-                                      minimumSize: (Size(45, 45)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        ),
-                      ),
+
                       Divider(color: Colors.grey),
                       Text(
                         "Ringkasan Pesanan",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 30.sp,
+                          fontSize: 24.sp,
                         ),
                       ),
 
-                      SizedBox(
-                        height: 230.h,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  height: 200.h,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Total Item",
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                      Text(
-                                        "Total Berat",
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                      Text(
-                                        "Pajak",
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                      Text(
-                                        "Diskon",
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                      Text(
-                                        "Total Harga",
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 200.h,
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text("${cart.length}"),
+                      Expanded(
+                        child: SizedBox(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    height: 100.h,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Total Item",
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 30.sp,
+                                          ),
+                                        ),
+                                        Text(
+                                          "Total Berat",
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 30.sp,
+                                          ),
+                                        ),
 
-                                      Text(
-                                        "${cart.fold<double>(0, (total, item) => total + item.weight).toStringAsFixed(1)} Kg",
-                                      ),
-                                      Text("${taxPercentage.toString()} %"),
-                                      Text(
-                                        "${discountPercentage.toString()} %",
-                                      ),
-                                      Text(
-                                        " ${formatCurrency(cart.fold<int>(0, (total, item) {
-                                          final product = allProducts.firstWhere((b) => b.id == item.productId, orElse: () => Product(id: 0, categoryId: null, category: '', productName: '', description: '', image: '', price: 0, status: 0));
-                                          return total + (product.price * item.weight).toInt();
-                                        }))}",
-                                      ),
-                                    ],
+                                        Text(
+                                          "Total Harga",
+                                          style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 30.sp,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                  SizedBox(
+                                    height: 100.h,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          "${cart.length}",
+                                          style: TextStyle(fontSize: 30.sp),
+                                        ),
+
+                                        Text(
+                                          "${cart.fold<double>(0, (total, item) => total + item.weight).toStringAsFixed(1)} Kg",
+                                          style: TextStyle(fontSize: 30.sp),
+                                        ),
+                                        Text(
+                                          " ${formatCurrency(cart.fold<int>(0, (total, item) {
+                                            final product = allProducts.firstWhere((b) => b.id == item.productId, orElse: () => Product(id: 0, categoryId: null, category: '', productName: '', description: '', image: '', price: 0, status: 0));
+                                            return total + (product.price * item.weight).toInt();
+                                          }))}",
+                                          style: TextStyle(fontSize: 30.sp),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       Spacer(flex: 1),
@@ -966,13 +970,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             borderRadius: BorderRadius.circular(12),
                           ),
 
-                          minimumSize: (Size(double.infinity, 90.h)),
+                          minimumSize: (Size(double.infinity, 80.h)),
                         ),
                         child: Text(
                           "Lanjutkan Pembayaran",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 18,
+                            fontSize: 32.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

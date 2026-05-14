@@ -8,6 +8,7 @@ import 'package:aplikasi_demo_test/utils/search_bar_widget.dart';
 import 'package:aplikasi_demo_test/utils/variable.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
@@ -259,9 +260,9 @@ class _StockScreenState extends State<StockScreen> {
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(
-                  width: 960,
                   child: Row(
                     children: [
                       SizedBox(
@@ -302,146 +303,160 @@ class _StockScreenState extends State<StockScreen> {
               child: Row(
                 children: [
                   // * Bagian Kiri
-                  SizedBox(
-                    width: 600,
-
-                    child:
-                        isLoading
-                            ? Center(
-                              child: LoadingAnimationWidget.staggeredDotsWave(
-                                color: AppColor.primary,
-                                size: 40,
-                              ),
-                            )
-                            : RefreshIndicator(
-                              onRefresh: () => fetchData(),
-                              child: GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
-                                      mainAxisSpacing: 20,
-                                      crossAxisSpacing: 20,
-                                      childAspectRatio: 5 / 7.5,
-                                    ),
-                                itemCount: filteredList.length,
-                                itemBuilder: (context, index) {
-                                  final item = filteredList[index];
-                                  return Card(
-                                    color: AppColor.backgroundColorSecondry,
-                                    elevation: 2,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          /// BARIS ICON ACTION
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-
-                                              IconButton(
-                                                onPressed: () async {
-                                                  updateData(item);
-                                                },
-                                                icon: Icon(
-                                                  Icons.edit,
-                                                  color: Colors.amber,
-                                                ),
-                                              ),
-                                              IconButton(
-                                                onPressed: () async {
-                                                  showDeleteDialog(item['id']);
-                                                },
-                                                icon: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.red,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          /// GAMBAR
-                                          Center(
-                                            child: Image.network(
-                                              "${Variable.storageBaseUrl}${item['image']}",
-                                              width: 110,
-                                              height: 110,
-                                              fit: BoxFit.cover,
-                                              errorBuilder: (
-                                                context,
-                                                error,
-                                                stackTrace,
-                                              ) {
-                                                return Image.asset(
-                                                  width: 110,
-                                                  height: 110,
-                                                  fit: BoxFit.cover,
-                                                  "assets/icon/placeholder.png",
-                                                );
-                                              },
-                                            ),
-                                          ),
-
-                                          SizedBox(height: 16),
-
-                                          /// DATA
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                  Expanded(
+                    child: SizedBox(
+                      child:
+                          isLoading
+                              ? Center(
+                                child: LoadingAnimationWidget.staggeredDotsWave(
+                                  color: AppColor.primary,
+                                  size: 40,
+                                ),
+                              )
+                              : RefreshIndicator(
+                                onRefresh: () => fetchData(),
+                                child: GridView.builder(
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 3,
+                                        mainAxisSpacing: 5,
+                                        crossAxisSpacing: 5,
+                                        childAspectRatio: 3 / 4.8,
+                                      ),
+                                  itemCount: filteredList.length,
+                                  itemBuilder: (context, index) {
+                                    final item = filteredList[index];
+                                    return Card(
+                                      color: AppColor.backgroundColorSecondry,
+                                      elevation: 2,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                        item["nama"],
-                                                        maxLines: 2,
-                                                        overflow:
-                                                            TextOverflow
-                                                                .ellipsis,
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: 8),
-                                                    Text(
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 2,
-                                                      "${item["kuantitas"]} ${item["unit"]}",
-                                                    ),
-                                                  ],
-                                                ),
-                                                Gap(10),
-                                                Text(
-                                                  item["keterangan"] ?? "",
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.grey,
+                                                IconButton(
+                                                  onPressed: () async {
+                                                    updateData(item);
+                                                  },
+                                                  icon: Icon(
+                                                    size: 20,
+                                                    Icons.edit,
+                                                    color: Colors.amber,
                                                   ),
-                                                  maxLines: 2,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
+                                                ),
+                                                IconButton(
+                                                  onPressed: () async {
+                                                    showDeleteDialog(
+                                                      item['id'],
+                                                    );
+                                                  },
+                                                  icon: Icon(
+                                                    size: 20,
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ],
+
+                                            /// GAMBAR
+                                            Center(
+                                              child: Image.network(
+                                                "${Variable.storageBaseUrl}${item['image']}",
+                                                width: 160.w,
+                                                height: 100.h,
+                                                fit: BoxFit.cover,
+                                                errorBuilder: (
+                                                  context,
+                                                  error,
+                                                  stackTrace,
+                                                ) {
+                                                  return Image.asset(
+                                                    width: 160.w,
+                                                    height: 100.h,
+                                                    fit: BoxFit.cover,
+                                                    "assets/icon/placeholder.png",
+                                                  );
+                                                },
+                                              ),
+                                            ),
+
+                                            SizedBox(height: 16),
+
+                                            /// DATA
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          style: TextStyle(
+                                                            fontSize: 28.sp,
+                                                          ),
+                                                          item["nama"],
+                                                          maxLines: 2,
+                                                          overflow:
+                                                              TextOverflow
+                                                                  .ellipsis,
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 18.w),
+                                                      Text(
+                                                        style: TextStyle(
+                                                          fontSize: 28.sp,
+                                                        ),
+                                                        overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
+                                                        maxLines: 2,
+                                                        "${item["kuantitas"]} ${item["unit"]}",
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Gap(10),
+                                                  Text(
+                                                    item["keterangan"] ?? "",
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    maxLines: 2,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
+                    ),
                   ),
                   VerticalDivider(color: Colors.black, thickness: 1),
                   // * Bagian Kanan
                   SingleChildScrollView(
                     child: SizedBox(
-                      width: 340,
+                      width: 600.w,
                       child: Column(
                         children: [
                           if (!isFormShow)
@@ -458,8 +473,8 @@ class _StockScreenState extends State<StockScreen> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
-                                  maximumSize: Size(350, 80),
-                                  minimumSize: Size(300, 60),
+
+                                  minimumSize: Size(300.w, 80.h),
                                 ),
                                 child: Row(
                                   mainAxisAlignment:
@@ -469,13 +484,13 @@ class _StockScreenState extends State<StockScreen> {
                                       "Tambahkan Stok Baru",
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 18,
+                                        fontSize: 34.sp,
                                       ),
                                     ),
                                     Icon(
                                       Bootstrap.box2,
                                       color: Colors.white,
-                                      size: 24,
+                                      size: 20,
                                     ),
                                   ],
                                 ),
@@ -493,11 +508,13 @@ class _StockScreenState extends State<StockScreen> {
                                         ? "Perbarui Data Stok"
                                         : "Buat Data Stok",
                                     style: TextStyle(
+                                      fontSize: 30.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Gap(20),
                                   TextFormField(
+                                    style: TextStyle(fontSize: 30.sp),
                                     controller: stockName,
                                     inputFormatters: [
                                       CapitalizeWordsFormatter(),
@@ -516,6 +533,7 @@ class _StockScreenState extends State<StockScreen> {
                                   ),
                                   Gap(15),
                                   TextFormField(
+                                    style: TextStyle(fontSize: 30.sp),
                                     keyboardType: TextInputType.number,
                                     controller: stockQuantity,
                                     inputFormatters: [
@@ -535,6 +553,10 @@ class _StockScreenState extends State<StockScreen> {
                                   ),
                                   Gap(15),
                                   DropdownButtonFormField<String>(
+                                    style: TextStyle(
+                                      fontSize: 30.sp,
+                                      color: Colors.black,
+                                    ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Unit tidak boleh kosong';
@@ -572,6 +594,7 @@ class _StockScreenState extends State<StockScreen> {
                                   ),
                                   Gap(15),
                                   TextFormField(
+                                    style: TextStyle(fontSize: 30.sp),
                                     controller: stockDesciption,
                                     maxLines: 4,
                                     inputFormatters: [
@@ -617,7 +640,7 @@ class _StockScreenState extends State<StockScreen> {
                                               12,
                                             ),
                                           ),
-                                          minimumSize: Size(130, 60),
+                                          minimumSize: Size(120.w, 80.h),
                                         ),
                                         onPressed: () async {
                                           setState(() {
@@ -633,7 +656,7 @@ class _StockScreenState extends State<StockScreen> {
                                         child: Text(
                                           "Batal",
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 28.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -647,7 +670,7 @@ class _StockScreenState extends State<StockScreen> {
                                               12,
                                             ),
                                           ),
-                                          minimumSize: Size(130, 60),
+                                          minimumSize: Size(120.w, 80.h),
                                         ),
                                         onPressed: () async {
                                           if (_formKey.currentState!
@@ -669,7 +692,7 @@ class _StockScreenState extends State<StockScreen> {
                                               ? "Perbarui Data Stok"
                                               : "Buat Data Stok",
                                           style: TextStyle(
-                                            fontSize: 16,
+                                            fontSize: 28.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
