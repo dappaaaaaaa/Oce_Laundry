@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\ProductsController;
 use App\Http\Controllers\Api\StockController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MidtransController;
@@ -47,6 +48,10 @@ Route::middleware('auth:sanctum')->post('/orderItem', [OrderItemController::clas
 Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/order-items/{id}', [OrderItemController::class, 'destroy']);
 });
+Route::get(
+    '/dashboard/chart-transaksi',
+    [DashboardController::class, 'chartTransaksi']
+);
 Route::middleware('auth:sanctum')->post('/orders', [OrdersController::class, 'store']);
 Route::middleware('auth:sanctum')->get('/orders', [OrdersController::class, 'index']);
 Route::middleware('auth:sanctum')->put('/orders/{id}/status', [OrdersController::class, 'updateStatus']);

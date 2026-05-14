@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 class SearchBarWidget extends StatefulWidget {
   final SearchController controller;
   final Function(String)? onChanged;
-  final String hintText; // tambahkan ini
+  final String hintText;
 
   const SearchBarWidget({
     super.key,
     required this.controller,
     this.onChanged,
-    this.hintText = "Cari...", // default value biar aman
+    this.hintText = "Cari...",
   });
 
   @override

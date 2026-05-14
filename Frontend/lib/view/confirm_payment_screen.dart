@@ -49,7 +49,6 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
   String? _username;
   bool _isLoading = false;
   final now = DateTime.now();
-  String? _totalPaymentError;
   String? _phoneNumberError;
   final _formKey = GlobalKey<FormState>();
   String? _customerNameError;
@@ -118,7 +117,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                   Text(
                     "Pilih Data Pelanggan",
                     style: TextStyle(
-                      fontSize: 18.sp,
+                      fontSize: 30.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -214,7 +213,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
     AwesomeDialog(
       context: context,
       dialogType: DialogType.success,
-      width: 550.w,
+      width: 850.w,
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
       dialogBackgroundColor: AppColor.backgroundColorPrimary,
@@ -230,69 +229,76 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 250.w,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Kasir"),
-                  const Text("Nama Customer"),
-                  const Text("Nomor Handphone"),
-                  const Text("Tanggal"),
-                  const Text("Metode Pembayaran"),
-                  const Divider(),
-                  SizedBox(
-                    height: 120.h,
-                    child: ListView.builder(
-                      itemCount: widget.cart.length,
-                      itemBuilder: (context, index) {
-                        final item = widget.cart[index];
-                        final product = widget.allProducts.firstWhere(
-                          (b) => b.id == item.productId,
-                        );
-                        return Text(
-                          '${product.productName} '
-                          'x ${item.weight} Kg',
-                        );
-                      },
+            Expanded(
+              child: SizedBox(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Kasir"),
+                    const Text("Nama Customer"),
+                    const Text("Nomor Handphone"),
+                    const Text("Tanggal"),
+                    const Text("Metode Pembayaran"),
+                    const Divider(),
+                    SizedBox(
+                      height: 150.h,
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: widget.cart.length,
+                        itemBuilder: (context, index) {
+                          final item = widget.cart[index];
+                          final product = widget.allProducts.firstWhere(
+                            (b) => b.id == item.productId,
+                          );
+                          return Text(
+                            '${product.productName} '
+                            'x ${item.weight} Kg',
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  const Divider(),
-                  const Text("QTY"),
-                  const Text("Total"),
-                  const Text("Jumlah Pembayaran"),
-                  const Text("Kembalian"),
-                ],
+                    const Divider(),
+                    const Text("QTY"),
+                    const Text("Total"),
+                    const Text("Jumlah Pembayaran"),
+                    const Text("Kembalian"),
+                  ],
+                ),
               ),
             ),
-            SizedBox(
-              width: 180.w,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(_username ?? ""),
-                  Text(_customerNameController.text),
-                  Text(_phoneNumberController.text),
-                  Text(DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())),
-                  Text(getPaymentMethodLabel(_paymentMethod)),
-                  const Divider(),
-                  SizedBox(
-                    height: 120.h,
-                    child: ListView.builder(
-                      itemCount: widget.cart.length,
-                      itemBuilder: (context, index) {
-                        final item = widget.cart[index];
-                        final total = item.price * item.weight;
-                        return Text(formatCurrency(total));
-                      },
+            Expanded(
+              child: SizedBox(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(_username ?? ""),
+                    Text(_customerNameController.text),
+                    Text(_phoneNumberController.text),
+                    Text(DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())),
+                    Text(getPaymentMethodLabel(_paymentMethod)),
+                    const Divider(),
+                    SizedBox(
+                      height: 150.h,
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: widget.cart.length,
+                        itemBuilder: (context, index) {
+                          final item = widget.cart[index];
+                          final total = item.price * item.weight;
+                          return Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(formatCurrency(total)),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  const Divider(),
-                  Text(widget.cart.length.toString()),
-                  Text(formatCurrency(totalHarga)),
-                  Text(_totalPayment.text),
-                  Text(kembalian >= 0 ? formatCurrency(kembalian) : 'Rp 0'),
-                ],
+                    const Divider(),
+                    Text(widget.cart.length.toString()),
+                    Text(formatCurrency(totalHarga)),
+                    Text(_totalPayment.text),
+                    Text(kembalian >= 0 ? formatCurrency(kembalian) : 'Rp 0'),
+                  ],
+                ),
               ),
             ),
           ],
@@ -497,151 +503,159 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                 child: Row(
                   children: [
                     // *Bagian Kiri
-                    SizedBox(
-                      width: 705.w,
-                      height: 600.h,
-
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Nama Produk",
-                                style: TextStyle(fontSize: 18.sp),
-                              ),
-                              Text("Berat", style: TextStyle(fontSize: 18.sp)),
-                              Text("Harga", style: TextStyle(fontSize: 18.sp)),
-                            ],
-                          ),
-                          Divider(color: Colors.black),
-                          Gap(10),
-                          // * Menampilkan daftar pesanan
-                          SizedBox(
-                            height: 300.h,
-                            child: ListView.builder(
-                              itemCount: widget.cart.length,
-                              itemBuilder: (context, index) {
-                                final item = widget.cart[index];
-                                final product = widget.allProducts.firstWhere(
-                                  (b) => b.id == item.productId,
-                                );
-                                final priceTotal = item.weight * item.price;
-                                return Column(
-                                  children: [
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 8.0.w,
-                                      ),
-                                      child: Container(
-                                        height: 30.h,
-                                        alignment: Alignment.center,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              flex: 3,
-                                              child: Text(
-                                                product.productName,
-                                                style: TextStyle(
-                                                  fontSize: 30.sp,
-                                                ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 2,
-                                              child: Center(
-                                                child: Text(
-                                                  "${item.weight}Kg",
-                                                  style: TextStyle(
-                                                    fontSize: 30.sp,
+                    Expanded(
+                      flex: 4,
+                      child: SizedBox(
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Nama Produk",
+                                  style: TextStyle(fontSize: 30.sp),
+                                ),
+                                Text(
+                                  "Berat",
+                                  style: TextStyle(fontSize: 30.sp),
+                                ),
+                                Text(
+                                  "Harga",
+                                  style: TextStyle(fontSize: 30.sp),
+                                ),
+                              ],
+                            ),
+                            Divider(color: Colors.black),
+                            Gap(10),
+                            // * Menampilkan daftar pesanan
+                            SizedBox(
+                              height: 300.h,
+                              child: ListView.builder(
+                                itemCount: widget.cart.length,
+                                itemBuilder: (context, index) {
+                                  final item = widget.cart[index];
+                                  final product = widget.allProducts.firstWhere(
+                                    (b) => b.id == item.productId,
+                                  );
+                                  final priceTotal = item.weight * item.price;
+                                  return Column(
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 8.0.w,
+                                        ),
+                                        child: Expanded(
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: [
+                                                Expanded(
+                                                  flex: 3,
+                                                  child: Text(
+                                                    product.productName,
+                                                    style: TextStyle(
+                                                      fontSize: 30.sp,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 2,
-                                              child: Text(
-                                                formatCurrency(priceTotal),
-                                                style: TextStyle(
-                                                  fontSize: 30.sp,
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Center(
+                                                    child: Text(
+                                                      "${item.weight}Kg",
+                                                      style: TextStyle(
+                                                        fontSize: 30.sp,
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                                textAlign: TextAlign.right,
-                                              ),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    formatCurrency(priceTotal),
+                                                    style: TextStyle(
+                                                      fontSize: 30.sp,
+                                                    ),
+                                                    textAlign: TextAlign.right,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                );
-                              },
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                          Divider(color: const Color.fromRGBO(0, 0, 0, 1)),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                height: 140.h,
-
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Subtotal',
-                                      style: TextStyle(fontSize: 18.sp),
-                                    ),
-                                    Text(
-                                      'Pajak ',
-                                      style: TextStyle(fontSize: 18.sp),
-                                    ),
-                                    Text(
-                                      'Diskon ',
-                                      style: TextStyle(fontSize: 18.sp),
-                                    ),
-                                    Text(
-                                      'Total ',
-                                      style: TextStyle(fontSize: 18.sp),
-                                    ),
-                                  ],
+                            Gap(200.h),
+                            Divider(color: const Color.fromRGBO(0, 0, 0, 1)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  height: 250.h,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Subtotal',
+                                        style: TextStyle(fontSize: 30.sp),
+                                      ),
+                                      Text(
+                                        'Pajak ',
+                                        style: TextStyle(fontSize: 30.sp),
+                                      ),
+                                      Text(
+                                        'Diskon ',
+                                        style: TextStyle(fontSize: 30.sp),
+                                      ),
+                                      Text(
+                                        'Total ',
+                                        style: TextStyle(fontSize: 30.sp),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: 160,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      formatCurrency(subTotal),
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    Text(
-                                      formatCurrency(tax),
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    Text(
-                                      formatCurrency(discount),
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                    Text(
-                                      formatCurrency(total),
-                                      style: TextStyle(fontSize: 18),
-                                    ),
-                                  ],
+                                SizedBox(
+                                  height: 250.h,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        formatCurrency(subTotal),
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                      Text(
+                                        formatCurrency(tax),
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                      Text(
+                                        formatCurrency(discount),
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                      Text(
+                                        formatCurrency(total),
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 
@@ -649,263 +663,347 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                     SizedBox(width: 20),
                     VerticalDivider(color: Colors.black),
                     SizedBox(width: 20),
-                    Container(
-                      width: 620,
-                      height: 600,
-                      decoration: BoxDecoration(
-                        // border: Border.all(color: Colors.black),
-                      ),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 450,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Form(
-                                    key: _formKey,
-                                    child: Row(
-                                      children: [
-                                        IconButton(
-                                          icon: Icon(
-                                            FontAwesome.address_book_solid,
-                                            color: AppColor.primary,
-                                            size: 35,
-                                          ),
-                                          onPressed: () {
-                                            _showCustomerPicker();
-                                          },
-                                        ),
-                                        Expanded(
-                                          child: ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              minHeight: 50,
-                                              maxWidth: 300,
+                    Expanded(
+                      flex: 7,
+                      child: Container(
+                        width: 620,
+                        height: 600,
+                        decoration: BoxDecoration(
+                          // border: Border.all(color: Colors.black),
+                        ),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 450,
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                            icon: Icon(
+                                              FontAwesome.address_book_solid,
+                                              color: AppColor.primary,
+                                              size: 35,
                                             ),
-                                            child: TextFormField(
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return "Nama Tidak Boleh Kosong";
-                                                }
-                                                return null;
-                                              },
-                                              controller:
-                                                  _customerNameController,
-                                              inputFormatters: [
-                                                CapitalizeWordsFormatter(),
-                                              ],
-                                              decoration:
-                                                  CustomTextFieldStyle.inputDecoration(
-                                                    hintText: "Nama Pelanggan",
-                                                    borderRadius: 4,
-                                                  ).copyWith(
-                                                    isDense: true,
-                                                    errorText:
-                                                        _customerNameError,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 16),
-                                        Expanded(
-                                          child: ConstrainedBox(
-                                            constraints: BoxConstraints(
-                                              minHeight: 50,
-                                              maxWidth: 300,
-                                            ),
-                                            child: TextFormField(
-                                              validator: (value) {
-                                                if (value == null ||
-                                                    value.isEmpty) {
-                                                  return null;
-                                                }
-                                                if (value.length < 10 ||
-                                                    value.length > 14) {
-                                                  return "Nomor HP harus 10–14 digit";
-                                                }
-                                                return null;
-                                              },
-                                              controller:
-                                                  _phoneNumberController,
-                                              keyboardType: TextInputType.phone,
-
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter
-                                                    .digitsOnly,
-                                                LengthLimitingTextInputFormatter(
-                                                  14,
-                                                ),
-                                              ],
-                                              decoration:
-                                                  CustomTextFieldStyle.inputDecoration(
-                                                    suffixText:
-                                                        "$_charCount/14",
-                                                    hintText:
-                                                        "Masukan Nomor HP Pelanggan",
-                                                    borderRadius: 4,
-                                                  ).copyWith(
-                                                    isDense: true,
-                                                    errorText:
-                                                        _phoneNumberError,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 18),
-                                  Divider(color: Colors.black),
-                                  const SizedBox(height: 12),
-
-                                  Text("Metode Bayar"),
-
-                                  Wrap(
-                                    spacing: 12,
-                                    children:
-                                        [
-                                          {'label': 'Cash', 'value': 0},
-                                          {'label': 'QRIS', 'value': 1},
-                                          {'label': 'Bayar Nanti', 'value': 2},
-                                        ].map((method) {
-                                          final isSelected =
-                                              _paymentMethod == method['value'];
-
-                                          return ChoiceChip(
-                                            label: Text(
-                                              method['label'] as String,
-                                            ),
-                                            selected: isSelected,
-                                            onSelected: (_) {
-                                              setState(() {
-                                                _paymentMethod =
-                                                    method['value'] as int;
-                                              });
+                                            onPressed: () {
+                                              _showCustomerPicker();
                                             },
-
-                                            selectedColor: AppColor.buttonColor,
-                                            backgroundColor: Colors.grey[300],
-                                            labelStyle: TextStyle(
-                                              color:
-                                                  isSelected
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                            ),
-                                            avatar: null,
-                                            showCheckmark: false,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              side: BorderSide(
-                                                color:
-                                                    isSelected
-                                                        ? AppColor.buttonColor
-                                                        : Colors.grey,
+                                          ),
+                                          Expanded(
+                                            child: ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                minHeight: 50,
+                                                maxWidth: 300,
+                                              ),
+                                              child: TextFormField(
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return "Nama Tidak Boleh Kosong";
+                                                  }
+                                                  return null;
+                                                },
+                                                controller:
+                                                    _customerNameController,
+                                                inputFormatters: [
+                                                  CapitalizeWordsFormatter(),
+                                                ],
+                                                decoration:
+                                                    CustomTextFieldStyle.inputDecoration(
+                                                      hintText:
+                                                          "Nama Pelanggan",
+                                                      borderRadius: 4,
+                                                    ).copyWith(
+                                                      isDense: true,
+                                                      errorText:
+                                                          _customerNameError,
+                                                    ),
                                               ),
                                             ),
-                                          );
-                                        }).toList(),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  const Divider(color: Colors.black),
-                                  if (_paymentMethod == 0) ...[
-                                    const SizedBox(height: 8),
-                                    const Text("Jumlah Pembayaran"),
-                                    const SizedBox(height: 16),
-                                    ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        minHeight: 50,
-                                        maxWidth: 300,
-                                      ),
-                                      child: TextFormField(
-                                        controller: _totalPayment,
-                                        keyboardType: TextInputType.number,
-                                        validator: (value) {
-                                          final totalValue = int.tryParse(
-                                            _totalPayment.text.replaceAll(
-                                              RegExp(r'[^0-9]'),
-                                              '',
-                                            ),
-                                          );
-                                          if (value == null || value.isEmpty) {
-                                            return 'Jumlah pembayaran wajib di isi';
-                                          }
-                                          final number = int.tryParse(value);
-                                          if (_paymentMethod == 0) {
-                                            if (_totalPayment.text.isEmpty ||
-                                                number == null ||
-                                                number <= 0) {
-                                              return "Jumlah pembayaran wajib di isi";
-                                            } else if (number < total) {
-                                              return "Jumlah pembayaran kurang dari total";
-                                            }
-                                          }
+                                          ),
+                                          const SizedBox(width: 16),
+                                          Expanded(
+                                            child: ConstrainedBox(
+                                              constraints: BoxConstraints(
+                                                minHeight: 50,
+                                                maxWidth: 300,
+                                              ),
+                                              child: TextFormField(
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return null;
+                                                  }
+                                                  if (value.length < 10 ||
+                                                      value.length > 14) {
+                                                    return "Nomor HP harus 10–14 digit";
+                                                  }
+                                                  return null;
+                                                },
+                                                controller:
+                                                    _phoneNumberController,
+                                                keyboardType:
+                                                    TextInputType.phone,
 
-                                          if (_paymentMethod == 2 &&
-                                              (number == null ||
-                                                  totalValue! > total)) {
-                                            return "Jumlah pembayaran lebih dari total";
-                                          }
-                                          return null;
-                                        },
-                                        onChanged: (value) {
-                                          final numericString = value
-                                              .replaceAll(
-                                                RegExp(r'[^0-9]'),
-                                                '',
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter
+                                                      .digitsOnly,
+                                                  LengthLimitingTextInputFormatter(
+                                                    14,
+                                                  ),
+                                                ],
+                                                decoration:
+                                                    CustomTextFieldStyle.inputDecoration(
+                                                      suffixText:
+                                                          "$_charCount/14",
+                                                      hintText:
+                                                          "Masukan Nomor HP Pelanggan",
+                                                      borderRadius: 4,
+                                                    ).copyWith(
+                                                      isDense: true,
+                                                      errorText:
+                                                          _phoneNumberError,
+                                                    ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      const SizedBox(height: 18),
+                                      Divider(color: Colors.black),
+                                      const SizedBox(height: 12),
+
+                                      Text("Metode Bayar"),
+
+                                      Wrap(
+                                        spacing: 12,
+                                        children:
+                                            [
+                                              {'label': 'Cash', 'value': 0},
+                                              {'label': 'QRIS', 'value': 1},
+                                              {
+                                                'label': 'Bayar Nanti',
+                                                'value': 2,
+                                              },
+                                            ].map((method) {
+                                              final isSelected =
+                                                  _paymentMethod ==
+                                                  method['value'];
+
+                                              return ChoiceChip(
+                                                label: Text(
+                                                  method['label'] as String,
+                                                ),
+
+                                                selected: isSelected,
+
+                                                onSelected: (_) {
+                                                  setState(() {
+                                                    _paymentMethod =
+                                                        method['value'] as int;
+                                                  });
+
+                                                  // VALIDATE ULANG
+                                                  _formKey.currentState
+                                                      ?.validate();
+                                                },
+
+                                                selectedColor:
+                                                    AppColor.buttonColor,
+
+                                                backgroundColor:
+                                                    Colors.grey[300],
+
+                                                labelStyle: TextStyle(
+                                                  color:
+                                                      isSelected
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                ),
+
+                                                avatar: null,
+
+                                                showCheckmark: false,
+
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+
+                                                  side: BorderSide(
+                                                    color:
+                                                        isSelected
+                                                            ? AppColor
+                                                                .buttonColor
+                                                            : Colors.grey,
+                                                  ),
+                                                ),
                                               );
-
-                                          final numericValue =
-                                              int.tryParse(numericString) ?? 0;
-
-                                          final formatted = formatCurrency(
-                                            numericValue,
-                                          );
-
-                                          _totalPayment
-                                              .value = TextEditingValue(
-                                            text: formatted,
-                                            selection: TextSelection.collapsed(
-                                              offset: formatted.length,
-                                            ),
-                                          );
-                                        },
-                                        decoration:
-                                            CustomTextFieldStyle.inputDecoration(
-                                              borderRadius: 4,
-                                            ).copyWith(
-                                              isDense: true,
-                                              errorText: _totalPaymentError,
-                                            ),
+                                            }).toList(),
                                       ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                  ],
+                                      const SizedBox(height: 16),
+                                      const Divider(color: Colors.black),
 
-                                  SizedBox(height: 20),
-                                  if (_paymentMethod == 0)
-                                    Wrap(
-                                      spacing: 20,
-                                      children:
-                                          [
-                                            total,
-                                            10000,
-                                            20000,
-                                            30000,
-                                            50000,
-                                            60000,
-                                            100000,
-                                            200000,
-                                          ].map((amount) {
-                                            final isHargaPas = amount == total;
+                                      const SizedBox(height: 8),
+                                      const Text("Jumlah Pembayaran"),
+                                      const SizedBox(height: 16),
+                                      ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          minHeight: 50,
+                                          maxWidth: 300,
+                                        ),
+                                        child: TextFormField(
+                                          controller: _totalPayment,
+                                          keyboardType: TextInputType.number,
 
-                                            return ElevatedButton(
+                                          validator: (value) {
+                                            final cleanValue = value
+                                                ?.replaceAll(
+                                                  RegExp(r'[^0-9]'),
+                                                  '',
+                                                );
+
+                                            final number = int.tryParse(
+                                              cleanValue ?? '',
+                                            );
+
+                                            if (_paymentMethod == 0) {
+                                              if (cleanValue == null ||
+                                                  cleanValue.isEmpty) {
+                                                return 'Jumlah pembayaran wajib di isi';
+                                              }
+
+                                              if (number == null ||
+                                                  number <= 0) {
+                                                return "Jumlah pembayaran wajib di isi";
+                                              }
+
+                                              if (number < total) {
+                                                return "Jumlah pembayaran kurang dari total";
+                                              }
+                                            }
+
+                                            if (_paymentMethod == 2) {
+                                              if (cleanValue != null &&
+                                                  cleanValue.isNotEmpty) {
+                                                if (number != null &&
+                                                    number > total) {
+                                                  return "Jumlah pembayaran lebih dari total";
+                                                }
+                                              }
+                                            }
+
+                                            return null;
+                                          },
+
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _totalPayment.clear();
+                                            });
+                                            final numericString = value
+                                                .replaceAll(
+                                                  RegExp(r'[^0-9]'),
+                                                  '',
+                                                );
+
+                                            final numericValue =
+                                                int.tryParse(numericString) ??
+                                                0;
+
+                                            final formatted = formatCurrency(
+                                              numericValue,
+                                            );
+
+                                            _totalPayment
+                                                .value = TextEditingValue(
+                                              text: formatted,
+                                              selection:
+                                                  TextSelection.collapsed(
+                                                    offset: formatted.length,
+                                                  ),
+                                            );
+                                          },
+
+                                          decoration:
+                                              CustomTextFieldStyle.inputDecoration(
+                                                borderRadius: 4,
+                                              ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+
+                                      SizedBox(height: 20),
+                                      if (_paymentMethod == 0)
+                                        Wrap(
+                                          spacing: 20,
+                                          children:
+                                              [
+                                                total,
+                                                10000,
+                                                20000,
+                                                30000,
+                                                50000,
+                                                60000,
+                                                100000,
+                                                200000,
+                                              ].map((amount) {
+                                                final isHargaPas =
+                                                    amount == total;
+
+                                                return ElevatedButton(
+                                                  onPressed: () {
+                                                    _totalPayment.text =
+                                                        formatCurrency(amount);
+                                                    _totalPayment.selection =
+                                                        TextSelection.collapsed(
+                                                          offset:
+                                                              _totalPayment
+                                                                  .text
+                                                                  .length,
+                                                        );
+                                                  },
+                                                  style: OutlinedButton.styleFrom(
+                                                    backgroundColor:
+                                                        AppColor.buttonColor,
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12,
+                                                          ),
+                                                    ),
+                                                    minimumSize: const Size(
+                                                      140,
+                                                      40,
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    isHargaPas
+                                                        ? 'Uang Pas'
+                                                        : formatCurrency(
+                                                          amount,
+                                                        ),
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                        ),
+                                      SizedBox(height: 20),
+                                      if (_paymentMethod == 2)
+                                        Wrap(
+                                          spacing: 12,
+                                          runSpacing: 12,
+                                          children: [
+                                            ElevatedButton(
                                               onPressed: () {
-                                                _totalPayment.text =
-                                                    formatCurrency(amount);
+                                                _totalPayment
+                                                    .text = formatCurrency(0);
                                                 _totalPayment.selection =
                                                     TextSelection.collapsed(
                                                       offset:
@@ -922,197 +1020,119 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                                       BorderRadius.circular(12),
                                                 ),
                                                 minimumSize: const Size(
-                                                  140,
+                                                  110,
                                                   40,
                                                 ),
                                               ),
-                                              child: Text(
-                                                isHargaPas
-                                                    ? 'Uang Pas'
-                                                    : formatCurrency(amount),
+                                              child: const Text(
+                                                'Belum Bayar',
                                                 style: TextStyle(
                                                   color: Colors.white,
                                                 ),
                                               ),
-                                            );
-                                          }).toList(),
-                                    ),
-
-                                  if (_paymentMethod == 2) ...[
-                                    const Text("Jumlah Pembayaran"),
-                                    const SizedBox(height: 16),
-                                    ConstrainedBox(
-                                      constraints: BoxConstraints(
-                                        minHeight: 50,
-                                        maxWidth: 300,
-                                      ),
-                                      child: TextField(
-                                        controller: _totalPayment,
-                                        keyboardType: TextInputType.number,
-                                        onChanged: (value) {
-                                          final numericString = value
-                                              .replaceAll(
-                                                RegExp(r'[^0-9]'),
-                                                '',
-                                              );
-
-                                          final numericValue =
-                                              int.tryParse(numericString) ?? 0;
-
-                                          final formatted = formatCurrency(
-                                            numericValue,
-                                          );
-
-                                          _totalPayment
-                                              .value = TextEditingValue(
-                                            text: formatted,
-                                            selection: TextSelection.collapsed(
-                                              offset: formatted.length,
                                             ),
-                                          );
-                                        },
-                                        decoration:
-                                            CustomTextFieldStyle.inputDecoration(
-                                              borderRadius: 4,
-                                            ).copyWith(
-                                              isDense: true,
-                                              errorText: _totalPaymentError,
-                                            ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                  ],
-
-                                  SizedBox(height: 20),
-                                  if (_paymentMethod == 2)
-                                    Wrap(
-                                      spacing: 12,
-                                      runSpacing: 12,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            _totalPayment.text = formatCurrency(
-                                              0,
-                                            );
-                                            _totalPayment.selection =
-                                                TextSelection.collapsed(
-                                                  offset:
-                                                      _totalPayment.text.length,
-                                                );
-                                          },
-                                          style: OutlinedButton.styleFrom(
-                                            backgroundColor:
-                                                AppColor.buttonColor,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                            ),
-                                            minimumSize: const Size(110, 40),
-                                          ),
-                                          child: const Text(
-                                            'Belum Bayar',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
+                                          ],
                                         ),
-                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(height: 50.h),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: AppColor.buttonColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      minimumSize: const Size(280, 60),
                                     ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 50),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: AppColor.buttonColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                    child: Text(
+                                      "Kembali",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
-                                  minimumSize: const Size(280, 60),
-                                ),
-                                child: Text(
-                                  "Kembali",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
 
-                              ElevatedButton(
-                                onPressed:
-                                    _isLoading
-                                        ? null
-                                        : () async {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            setState(() {
-                                              _isLoading = true;
-                                            });
-                                            try {
-                                              final totalValue = int.tryParse(
-                                                _totalPayment.text.replaceAll(
-                                                  RegExp(r'[^0-9]'),
-                                                  '',
-                                                ),
-                                              );
+                                  ElevatedButton(
+                                    onPressed:
+                                        _isLoading
+                                            ? null
+                                            : () async {
+                                              if (_formKey.currentState!
+                                                  .validate()) {
+                                                setState(() {
+                                                  _isLoading = true;
+                                                });
+                                                try {
+                                                  final totalValue =
+                                                      int.tryParse(
+                                                        _totalPayment.text
+                                                            .replaceAll(
+                                                              RegExp(r'[^0-9]'),
+                                                              '',
+                                                            ),
+                                                      );
 
-                                              final phoneValue = int.tryParse(
-                                                _phoneNumberController.text,
-                                              );
+                                                  final phoneValue =
+                                                      int.tryParse(
+                                                        _phoneNumberController
+                                                            .text,
+                                                      );
 
-                                              final totalPayment =
-                                                  _paymentMethod == 1
-                                                      ? total
-                                                      : totalValue ?? 0;
+                                                  final totalPayment =
+                                                      _paymentMethod == 1
+                                                          ? total
+                                                          : totalValue ?? 0;
 
-                                              if (_paymentMethod == 1) {
-                                                final result = await Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder:
-                                                        (
-                                                          _,
-                                                        ) => MidtransPaymentScreen(
-                                                          amount: total,
-                                                          customerName:
-                                                              _customerNameController
-                                                                  .text,
-                                                          customerPhone:
-                                                              phoneValue
-                                                                  .toString(),
-                                                        ),
-                                                  ),
-                                                );
-
-                                                if (result != true) {
-                                                  if (!context.mounted) return;
-
-                                                  ScaffoldMessenger.of(
-                                                    context,
-                                                  ).showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                        'Pembayaran QRIS dibatalkan',
+                                                  if (_paymentMethod == 1) {
+                                                    final result = await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder:
+                                                            (
+                                                              _,
+                                                            ) => MidtransPaymentScreen(
+                                                              amount: total,
+                                                              customerName:
+                                                                  _customerNameController
+                                                                      .text,
+                                                              customerPhone:
+                                                                  phoneValue
+                                                                      .toString(),
+                                                            ),
                                                       ),
-                                                    ),
-                                                  );
+                                                    );
 
-                                                  return;
-                                                }
-                                              }
+                                                    if (result != true) {
+                                                      if (!context.mounted)
+                                                        return;
 
-                                              final orderId = await api
-                                                  .postOrder({
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        const SnackBar(
+                                                          content: Text(
+                                                            'Pembayaran QRIS dibatalkan',
+                                                          ),
+                                                        ),
+                                                      );
+
+                                                      return;
+                                                    }
+                                                  }
+
+                                                  final orderId = await api.postOrder({
                                                     'total_payment':
                                                         totalPayment,
                                                     'sub_total': subTotal,
@@ -1142,82 +1162,85 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                                             : 1,
                                                   }, await token);
 
-                                              if (orderId == null) {
-                                                throw Exception(
-                                                  'Gagal membuat order',
-                                                );
-                                              }
+                                                  if (orderId == null) {
+                                                    throw Exception(
+                                                      'Gagal membuat order',
+                                                    );
+                                                  }
 
-                                              for (final item in widget.cart) {
-                                                final success = await api
-                                                    .postOrderItem({
-                                                      'order_id': orderId,
-                                                      'products_id':
-                                                          item.productId,
-                                                      'price': item.price,
-                                                      'weight': item.weight,
-                                                    }, await token);
+                                                  for (final item
+                                                      in widget.cart) {
+                                                    final success = await api
+                                                        .postOrderItem({
+                                                          'order_id': orderId,
+                                                          'products_id':
+                                                              item.productId,
+                                                          'price': item.price,
+                                                          'weight': item.weight,
+                                                        }, await token);
 
-                                                if (!success) {
-                                                  throw Exception(
-                                                    'Gagal mengirim item ${item.productId}',
+                                                    if (!success) {
+                                                      throw Exception(
+                                                        'Gagal mengirim item ${item.productId}',
+                                                      );
+                                                    }
+                                                  }
+
+                                                  if (!context.mounted) return;
+
+                                                  await _paymentAlert(orderId);
+                                                } catch (e) {
+                                                  if (!context.mounted) return;
+
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
+                                                    SnackBar(
+                                                      content: Text(
+                                                        'Terjadi kesalahan: $e',
+                                                      ),
+                                                    ),
                                                   );
+                                                } finally {
+                                                  if (context.mounted) {
+                                                    setState(() {
+                                                      _isLoading = false;
+                                                    });
+                                                  }
                                                 }
                                               }
-
-                                              if (!context.mounted) return;
-
-                                              await _paymentAlert(orderId);
-                                            } catch (e) {
-                                              if (!context.mounted) return;
-
-                                              ScaffoldMessenger.of(
-                                                context,
-                                              ).showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                    'Terjadi kesalahan: $e',
-                                                  ),
-                                                ),
-                                              );
-                                            } finally {
-                                              if (context.mounted) {
-                                                setState(() {
-                                                  _isLoading = false;
-                                                });
-                                              }
-                                            }
-                                          }
-                                        },
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: AppColor.buttonColor,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                                            },
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: AppColor.buttonColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      minimumSize: const Size(280, 60),
+                                    ),
+                                    child:
+                                        _isLoading
+                                            ? const SizedBox(
+                                              height: 20,
+                                              width: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                            : const Text(
+                                              'Konfirmasi Pembayaran',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
                                   ),
-                                  minimumSize: const Size(280, 60),
-                                ),
-                                child:
-                                    _isLoading
-                                        ? const SizedBox(
-                                          height: 20,
-                                          width: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.white,
-                                          ),
-                                        )
-                                        : const Text(
-                                          'Konfirmasi Pembayaran',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ],

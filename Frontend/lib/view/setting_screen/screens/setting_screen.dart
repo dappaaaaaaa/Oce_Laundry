@@ -12,14 +12,11 @@ import '../../../database/database_helper.dart';
 import '../../../service/auth_service.dart';
 
 class SettingScreen extends StatefulWidget {
-  final int userId;
-  final String username;
+
   final VoidCallback onSyncSuccess;
 
   const SettingScreen({
     super.key,
-    required this.userId,
-    required this.username,
     required this.onSyncSuccess,
   });
 
@@ -294,7 +291,6 @@ class _SettingScreenState extends State<SettingScreen> {
                   Expanded(
                     child: SettingContentWidget(
                       selectedValue: selectedValue,
-                      username: widget.username,
                       onSyncProduct: () => _syncProduct(context),
                       onSyncTransaksi: () => _syncTransaksi(context),
                       onSyncSuccess: widget.onSyncSuccess,

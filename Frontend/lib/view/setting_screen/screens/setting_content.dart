@@ -8,7 +8,6 @@ import '../../../utils/app_color.dart';
 
 class SettingContentWidget extends StatelessWidget {
   final String? selectedValue;
-  final String username;
   final VoidCallback onSyncProduct;
   final VoidCallback onSyncTransaksi;
   final VoidCallback onSyncSuccess;
@@ -16,7 +15,6 @@ class SettingContentWidget extends StatelessWidget {
   const SettingContentWidget({
     super.key,
     required this.selectedValue,
-    required this.username,
     required this.onSyncProduct,
     required this.onSyncTransaksi,
     required this.onSyncSuccess,

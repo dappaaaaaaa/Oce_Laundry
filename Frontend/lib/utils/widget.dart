@@ -6,11 +6,14 @@ Widget orderStatusRow({
   required Color color,
   required String text,
 }) {
-  return Row(
-    children: [
-      Icon(icon, color: color, size: 18),
-      SizedBox(width: 6),
-      Text(text, style: TextStyle(color: Colors.black)),
-    ],
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Row(
+      children: [
+        Icon(icon, color: color, size: 18),
+        SizedBox(width: 6),
+        Text(text, style: TextStyle(color: Colors.black)),
+      ],
+    ),
   );
 }

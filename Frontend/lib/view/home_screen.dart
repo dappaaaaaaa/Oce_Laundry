@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:aplikasi_demo_test/database/product.dart';
 import 'package:aplikasi_demo_test/database/database_helper.dart';
 import 'package:aplikasi_demo_test/database/order_item.dart';
+import 'package:aplikasi_demo_test/service/auth_service.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:aplikasi_demo_test/utils/search_bar_widget.dart';
 import 'package:aplikasi_demo_test/view/confirm_payment_screen.dart';
@@ -14,12 +15,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
+import 'package:page_transition/page_transition.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String username;
-  final int userId;
-
-  const HomeScreen({super.key, required this.username, required this.userId});
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -41,7 +40,13 @@ class _HomeScreenState extends State<HomeScreen> {
   String _formattedDateTime = '';
   Timer? _timer;
   double discountPercentage = 0.0;
+  Map<String, dynamic>? user;
   double taxPercentage = 0.0;
+  String searchQuery = '';
+
+  int? selectedStatus;
+
+  DateTimeRange? selectedDateRange;
 
   @override
   void initState() {
@@ -51,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadCategories();
     _loadProducts();
     _startDateTimeUpdater();
+    loadUser();
   }
 
   @override
@@ -59,6 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+  Future<void> loadUser() async {
+    final userData = await AuthService.getUserData();
+
+    setState(() {
+      user = userData;
+    });
+  }
   // *Method Mengambil Category
 
   Future<void> _startDateTimeUpdater() async {
@@ -526,19 +539,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Selamat Datang ${widget.username}",
-                      style: TextStyle(fontSize: 30.sp),
-                    ),
+                    Text("Selamat Datang ${user?['username'] ?? ''}"),
                     Text(
                       _formattedDateTime,
                       style: TextStyle(
-                        fontSize: 6.sp,
+                        fontSize: 28.sp,
                         fontWeight: FontWeight.normal,
                         color: Colors.grey,
                       ),
                     ),
-                    SizedBox(height: 40.h),
+                    SizedBox(height: 100.h),
                     Row(
                       children: [
                         ElevatedButton.icon(
@@ -556,6 +566,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColor.primary,
                             foregroundColor: Colors.white,
+                            minimumSize: Size(200.w, 80.h),
                             elevation: 2,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -567,7 +578,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
 
-                        Gap(10),
+                        Gap(30),
 
                         Expanded(
                           child: SearchBarWidget(
@@ -644,12 +655,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                               scale: 28,
                                             ),
                                           ),
-                                          const SizedBox(height: 20),
+                                          SizedBox(height: 20.h),
                                           Text(
                                             product.productName,
                                             style: TextStyle(fontSize: 30.sp),
                                           ),
-                                          SizedBox(height: 5),
+                                          SizedBox(height: 5.h),
                                           Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
@@ -693,276 +704,281 @@ class _HomeScreenState extends State<HomeScreen> {
             VerticalDivider(color: Colors.grey),
 
             // *Bagian Kanan
-            SizedBox(
-              height: 655.h,
-              width: 120.w,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        Text("Nama Produk"),
-                        Text("Berat"),
-                        Text("Harga"),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    // *Bagian Kanan
-                    SizedBox(
-                      height: 250,
-                      child: ListView.builder(
-                        itemCount: cart.length,
-                        itemBuilder: (context, index) {
-                          final item = cart[index];
-                          final product = allProducts.firstWhere(
-                            (b) => b.id == item.productId,
-                            orElse:
-                                () => Product(
-                                  id: 0,
-                                  categoryId: null,
-                                  category: '',
-                                  productName: 'Tidak ditemukan',
-                                  description: '',
-                                  image: null,
-                                  price: 0,
-                                  status: 0,
-                                ),
-                          );
-
-                          final priceTotal = item.weight * product.price;
-                          return InkWell(
-                            onTap: () => _editItemWeight(item),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0,
+            Expanded(
+              child: SizedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text("Nama Produk"),
+                          Text("Berat"),
+                          Text("Harga"),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      // *Bagian Kanan
+                      SizedBox(
+                        height: 400.h,
+                        child: ListView.builder(
+                          itemCount: cart.length,
+                          itemBuilder: (context, index) {
+                            final item = cart[index];
+                            final product = allProducts.firstWhere(
+                              (b) => b.id == item.productId,
+                              orElse:
+                                  () => Product(
+                                    id: 0,
+                                    categoryId: null,
+                                    category: '',
+                                    productName: 'Tidak ditemukan',
+                                    description: '',
+                                    image: null,
+                                    price: 0,
+                                    status: 0,
                                   ),
-                                  child: Container(
-                                    height: 30,
-                                    alignment: Alignment.center,
-                                    child: Dismissible(
-                                      key: Key(item.productId.toString()),
-                                      onDismissed: (direction) {
-                                        setState(() {
-                                          cart.removeAt(index);
-                                        });
-                                      },
+                            );
 
-                                      background: Container(
-                                        color: Color(0xFFE55151),
-                                        alignment: Alignment.centerRight,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                        ),
-                                        child: const Icon(
-                                          Icons.delete,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            flex: 3,
-                                            child: Text(product.productName),
+                            final priceTotal = item.weight * product.price;
+                            return InkWell(
+                              onTap: () => _editItemWeight(item),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8.0,
+                                    ),
+                                    child: Container(
+                                      height: 30,
+                                      alignment: Alignment.center,
+                                      child: Dismissible(
+                                        key: Key(item.productId.toString()),
+                                        onDismissed: (direction) {
+                                          setState(() {
+                                            cart.removeAt(index);
+                                          });
+                                        },
+
+                                        background: Container(
+                                          color: Color(0xFFE55151),
+                                          alignment: Alignment.centerRight,
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 20,
                                           ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Center(
-                                              child: Text(
-                                                "${item.weight}Kg",
-                                                style: const TextStyle(
-                                                  fontSize: 16,
+                                          child: const Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Expanded(
+                                              flex: 3,
+                                              child: Text(product.productName),
+                                            ),
+                                            Expanded(
+                                              flex: 2,
+                                              child: Center(
+                                                child: Text(
+                                                  "${item.weight}Kg",
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              formatCurrency(priceTotal),
-                                              textAlign: TextAlign.right,
+                                            Expanded(
+                                              flex: 2,
+                                              child: Text(
+                                                formatCurrency(priceTotal),
+                                                textAlign: TextAlign.right,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 150,
-                      child: Column(
-                        children: [
-                          if (cart.isNotEmpty)
+                      SizedBox(
+                        width: 200.w,
+                        child: Column(
+                          children: [
+                            if (cart.isNotEmpty)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      showTaxDialog();
+                                    },
+                                    icon: Icon(
+                                      BoxIcons.bxs_badge_dollar,
+                                      color: Colors.white,
+                                      size: 26,
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: AppColor.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
+                                      maximumSize: Size(45, 45),
+                                      minimumSize: (Size(45, 45)),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      showDiscountDialog();
+                                    },
+                                    icon: Icon(
+                                      Bootstrap.tags_fill,
+                                      color: Colors.white,
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: AppColor.primary,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(45),
+                                      ),
+                                      maximumSize: Size(45, 45),
+                                      minimumSize: (Size(45, 45)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                      Divider(color: Colors.grey),
+                      Text(
+                        "Ringkasan Pesanan",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30.sp,
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: 230.h,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                IconButton(
-                                  onPressed: () {
-                                    showTaxDialog();
-                                  },
-                                  icon: Icon(
-                                    BoxIcons.bxs_badge_dollar,
-                                    color: Colors.white,
-                                    size: 26,
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: AppColor.primary,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(40),
-                                    ),
-                                    maximumSize: Size(45, 45),
-                                    minimumSize: (Size(45, 45)),
+                                SizedBox(
+                                  height: 200.h,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Total Item",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      Text(
+                                        "Total Berat",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      Text(
+                                        "Pajak",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      Text(
+                                        "Diskon",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                      Text(
+                                        "Total Harga",
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                IconButton(
-                                  onPressed: () {
-                                    showDiscountDialog();
-                                  },
-                                  icon: Icon(
-                                    Bootstrap.tags_fill,
-                                    color: Colors.white,
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: AppColor.primary,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(45),
-                                    ),
-                                    maximumSize: Size(45, 45),
-                                    minimumSize: (Size(45, 45)),
+                                SizedBox(
+                                  height: 200.h,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text("${cart.length}"),
+
+                                      Text(
+                                        "${cart.fold<double>(0, (total, item) => total + item.weight).toStringAsFixed(1)} Kg",
+                                      ),
+                                      Text("${taxPercentage.toString()} %"),
+                                      Text(
+                                        "${discountPercentage.toString()} %",
+                                      ),
+                                      Text(
+                                        " ${formatCurrency(cart.fold<int>(0, (total, item) {
+                                          final product = allProducts.firstWhere((b) => b.id == item.productId, orElse: () => Product(id: 0, categoryId: null, category: '', productName: '', description: '', image: '', price: 0, status: 0));
+                                          return total + (product.price * item.weight).toInt();
+                                        }))}",
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Divider(color: Colors.grey),
-                    const Text(
-                      "Ringkasan Pesanan",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    Spacer(flex: 1),
-                    SizedBox(
-                      height: 150,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(
-                                height: 130,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Total Item",
-                                      style: TextStyle(color: Colors.grey),
+                      Spacer(flex: 1),
+                      ElevatedButton(
+                        onPressed:
+                            cart.isEmpty
+                                ? null
+                                : () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      duration: Durations.medium4,
+                                      type: PageTransitionType.rightToLeft,
+                                      child: ConfirmPaymentScreen(
+                                        cart: cart,
+                                        allProducts: allProducts,
+                                        tax: taxPercentage,
+                                        discount: discountPercentage,
+                                      ),
                                     ),
-                                    Text(
-                                      "Total Berat",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                    Text(
-                                      "Pajak",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                    Text(
-                                      "Diskon",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                    Text(
-                                      "Total Harga",
-                                      style: TextStyle(color: Colors.grey),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 130,
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text("${cart.length}"),
-
-                                    Text(
-                                      "${cart.fold<double>(0, (total, item) => total + item.weight).toStringAsFixed(1)} Kg",
-                                    ),
-                                    Text("${taxPercentage.toString()} %"),
-                                    Text("${discountPercentage.toString()} %"),
-                                    Text(
-                                      " ${formatCurrency(cart.fold<int>(0, (total, item) {
-                                        final product = allProducts.firstWhere((b) => b.id == item.productId, orElse: () => Product(id: 0, categoryId: null, category: '', productName: '', description: '', image: '', price: 0, status: 0));
-                                        return total + (product.price * item.weight).toInt();
-                                      }))}",
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                                  );
+                                },
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: AppColor.buttonColor,
+                          disabledBackgroundColor: Colors.grey,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        ],
-                      ),
-                    ),
-                    Spacer(flex: 1),
-                    ElevatedButton(
-                      onPressed:
-                          cart.isEmpty
-                              ? null
-                              : () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (_) => ConfirmPaymentScreen(
-                                          cart: cart,
-                                          allProducts: allProducts,
-                                          tax: taxPercentage,
-                                          discount: discountPercentage,
-                                        ),
-                                  ),
-                                );
-                              },
-                      style: OutlinedButton.styleFrom(
-                        backgroundColor: AppColor.buttonColor,
-                        disabledBackgroundColor: Colors.grey,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
 
-                        minimumSize: (Size(double.infinity, 50)),
-                      ),
-                      child: Text(
-                        "Lanjutkan Pembayaran",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                          minimumSize: (Size(double.infinity, 90.h)),
+                        ),
+                        child: Text(
+                          "Lanjutkan Pembayaran",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

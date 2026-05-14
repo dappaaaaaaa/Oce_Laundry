@@ -16,8 +16,7 @@ void main() async {
   await initializeDateFormatting('id_ID', null);
   await requestPermissions();
   final isLoggedIn = await AuthService.isLoggedIn();
-  final userId = await AuthService.getUserId();
-  runApp(MyApp(isLoggedIn: isLoggedIn, userId: userId));
+  runApp(MyApp(isLoggedIn: isLoggedIn));
 }
 
 // * Fungsi untuk meminta izin yang diperlukan
@@ -32,7 +31,7 @@ Future<void> requestPermissions() async {
       ].request();
 
   if (statuses.values.any((status) => status.isDenied)) {
-    debugPrint("Beberapa izin ditolak!");
+    debugPrint("Beberapa izin ditolak!"); 
   }
 
   if (statuses.values.any((status) => status.isPermanentlyDenied)) {
@@ -44,9 +43,8 @@ Future<void> requestPermissions() async {
 
 class MyApp extends StatelessWidget {
   final bool isLoggedIn;
-  final int? userId;
 
-  const MyApp({super.key, required this.isLoggedIn, required this.userId});
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +68,7 @@ class MyApp extends StatelessWidget {
           ),
 
           // * Menentukan halaman awal berdasarkan status login
-          home:
-              isLoggedIn && userId != null
-                  ? NavigationScreen(userId: userId!)
-                  : LoginScreen(),
+          home: isLoggedIn ? NavigationScreen() : LoginScreen(),
         );
       },
     );

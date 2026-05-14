@@ -12,16 +12,7 @@ import 'history_order/history_order.dart';
 import 'setting_screen/screens/setting_screen.dart';
 
 class Mainwrapper extends StatefulWidget {
-  final String username;
-  final int userId;
-  final VoidCallback onLogout;
-
-  const Mainwrapper({
-    super.key,
-    required this.username,
-    required this.userId,
-    required this.onLogout,
-  });
+  const Mainwrapper({super.key});
 
   @override
   State<Mainwrapper> createState() => _MainwrapperState();
@@ -38,20 +29,18 @@ class _MainwrapperState extends State<Mainwrapper> {
   @override
   void initState() {
     super.initState();
-    inventoryScreen = HistoryOrder(key: _inventoryKey, userId: widget.userId);
+    inventoryScreen = HistoryOrder(key: _inventoryKey);
   }
 
   // *Fungsi untuk membangun daftar layar yang akan ditampilkan
   List<Widget> _buildScreens() {
     return [
-      HomeScreen(username: widget.username, userId: widget.userId),
+      HomeScreen(),
       inventoryScreen,
       SettingScreen(
-        userId: widget.userId,
         onSyncSuccess: () {
           _inventoryKey.currentState?.refreshData();
         },
-        username: widget.username,
       ),
       CustomerScreen(),
       StockScreen(),

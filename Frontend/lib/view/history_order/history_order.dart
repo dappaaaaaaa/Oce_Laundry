@@ -3,6 +3,7 @@
 import 'package:aplikasi_demo_test/database/order.dart';
 import 'package:aplikasi_demo_test/service/api_service.dart';
 import 'package:aplikasi_demo_test/service/auth_service.dart';
+import 'package:aplikasi_demo_test/utils/search_bar_widget.dart';
 import 'package:aplikasi_demo_test/utils/widget.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:aplikasi_demo_test/utils/print_struk.dart';
@@ -11,17 +12,19 @@ import 'package:aplikasi_demo_test/view/history_order/report_status_widget.dart'
 import 'package:aplikasi_demo_test/view/update_payment_screen.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:data_table_2/data_table_2.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 class HistoryOrder extends StatefulWidget {
-  final int userId;
-
-  const HistoryOrder({super.key, required this.userId});
+  const HistoryOrder({super.key});
 
   @override
   HistoryOrderState createState() => HistoryOrderState();
@@ -31,8 +34,16 @@ class HistoryOrderState extends State<HistoryOrder>
     with AutomaticKeepAliveClientMixin {
   Future<List<Order>>? _futureOrders;
   int jumlahOrder = 0;
+  final searchController = SearchController();
   bool _isLoading = false;
   Map<int, int> jumlahOrderPerStatus = {};
+  List<dynamic> filteredList = [];
+  List<Order> allOrders = [];
+  String searchQuery = '';
+
+  int? selectedStatus;
+
+  DateTimeRange? selectedDateRange;
   final token = AuthService.getToken();
   @override
   void initState() {
@@ -170,6 +181,13 @@ class HistoryOrderState extends State<HistoryOrder>
 
     setState(() {
       _futureOrders = ApiService().getOrders(tokenValue);
+    });
+
+    final orders = await ApiService().getOrders(tokenValue);
+
+    setState(() {
+      allOrders = orders;
+      filteredList = orders;
     });
 
     await _loadJumlahOrderPerStatus();
@@ -396,6 +414,160 @@ class HistoryOrderState extends State<HistoryOrder>
     _loadData();
   }
 
+  void filterOrders() {
+    List<Order> result = allOrders;
+
+    // ================= SEARCH =================
+    if (searchQuery.isNotEmpty) {
+      result =
+          result.where((item) {
+            final nama = item.customerName.toLowerCase();
+
+            final id = item.id.toString();
+
+            return nama.contains(searchQuery.toLowerCase()) ||
+                id.contains(searchQuery);
+          }).toList();
+    }
+
+    // ================= STATUS =================
+    if (selectedStatus != null) {
+      result =
+          result.where((item) {
+            return item.isOrderComplete == selectedStatus;
+          }).toList();
+    }
+
+    // ================= TANGGAL =================
+    if (selectedDateRange != null) {
+      result =
+          result.where((item) {
+            final date = DateTime.parse(item.transactionTime.toString());
+
+            return date.isAfter(
+                  selectedDateRange!.start.subtract(const Duration(days: 1)),
+                ) &&
+                date.isBefore(
+                  selectedDateRange!.end.add(const Duration(days: 1)),
+                );
+          }).toList();
+    }
+
+    setState(() {
+      filteredList = result;
+    });
+  }
+
+  Future<void> showDateFilterDialog(BuildContext context) async {
+    PickerDateRange? tempRange;
+
+    if (selectedDateRange != null) {
+      tempRange = PickerDateRange(
+        selectedDateRange!.start,
+        selectedDateRange!.end,
+      );
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: AppColor.backgroundColorPrimary,
+
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [Text("Filter Tanggal"), Text("Filter status")],
+              ),
+              content: SizedBox(
+                width: 400,
+                height: 400,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: SfDateRangePicker(
+                        view: DateRangePickerView.month,
+                        headerStyle: DateRangePickerHeaderStyle(
+                          textStyle: TextStyle(color: Colors.white),
+                          backgroundColor: AppColor.primary,
+                          textAlign: TextAlign.center,
+                        ),
+                        monthViewSettings:
+                            const DateRangePickerMonthViewSettings(
+                              firstDayOfWeek: 1,
+                            ),
+                        selectionMode: DateRangePickerSelectionMode.range,
+                        backgroundColor: AppColor.backgroundColorPrimary,
+                        enableMultiView: true,
+                        initialSelectedRange: tempRange,
+
+                        onSelectionChanged: (args) {
+                          setDialogState(() {
+                            tempRange = args.value;
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    if (tempRange != null)
+                      Text(
+                        "${tempRange!.startDate?.day}/${tempRange!.startDate?.month}/${tempRange!.startDate?.year}"
+                        " - "
+                        "${tempRange!.endDate?.day}/${tempRange!.endDate?.month}/${tempRange!.endDate?.year}",
+                      ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+
+                  child: const Text("Batal"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      selectedDateRange = null;
+                    });
+                    filterOrders();
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Reset"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (tempRange != null &&
+                        tempRange!.startDate != null &&
+                        tempRange!.endDate != null) {
+                      setState(() {
+                        selectedDateRange = DateTimeRange(
+                          start: tempRange!.startDate!,
+                          end: tempRange!.endDate!,
+                        );
+                      });
+
+                      filterOrders();
+                    }
+
+                    Navigator.pop(context);
+                  },
+
+                  child: const Text("Terapkan"),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -448,6 +620,97 @@ class HistoryOrderState extends State<HistoryOrder>
                     ],
                   ),
                   SizedBox(height: 20),
+                  Row(
+                    children: [
+                      DropdownButton<int?>(
+                        dropdownColor: AppColor.backgroundColorPrimary,
+                        value: selectedStatus,
+                        hint: const Text("Semua Status"),
+                        items: [
+                          DropdownMenuItem(value: null, child: Text("Semua")),
+                          DropdownMenuItem(
+                            value: 0,
+                            child: orderStatusRow(
+                              icon: FontAwesome.clock_solid,
+                              color: Colors.orange,
+                              text: "Antrian",
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 1,
+                            child: orderStatusRow(
+                              icon: Icons.work,
+                              color: Colors.blue,
+                              text: "Proses",
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 2,
+                            child: orderStatusRow(
+                              icon: Icons.shopping_bag,
+                              color: Colors.purple,
+                              text: "Siap Diambil",
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 3,
+                            child: orderStatusRow(
+                              icon: Icons.check_circle,
+                              color: Colors.green,
+                              text: "Selesai",
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          selectedStatus = value;
+
+                          filterOrders();
+                        },
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          await showDateFilterDialog(context);
+                        },
+
+                        icon: const Icon(Icons.date_range),
+
+                        label: Text(
+                          selectedDateRange == null
+                              ? "Filter Tanggal"
+                              : "${selectedDateRange!.start.day}/${selectedDateRange!.start.month}"
+                                  " - "
+                                  "${selectedDateRange!.end.day}/${selectedDateRange!.end.month}",
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          searchQuery = '';
+
+                          selectedStatus = null;
+
+                          selectedDateRange = null;
+
+                          filterOrders();
+                        },
+
+                        child: const Text("Reset Filter"),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: SizedBox(
+                          width: 500.w,
+                          child: SearchBarWidget(
+                            controller: searchController,
+                            onChanged: (value) {
+                              searchQuery = value;
+
+                              filterOrders();
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   Expanded(
                     child: FutureBuilder<List<Order>>(
                       future: _futureOrders,
@@ -463,616 +726,508 @@ class HistoryOrderState extends State<HistoryOrder>
                             child: Text('Tidak ada data transaksi.'),
                           );
                         }
-                        final orders = snapshot.data!;
+                        if (allOrders.isEmpty) {
+                          allOrders = snapshot.data!;
+                          filteredList = snapshot.data!;
+                        }
                         return RefreshIndicator(
                           onRefresh: refreshData,
-                          child: SingleChildScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            child: SingleChildScrollView(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              scrollDirection: Axis.vertical,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(height: 20),
-                                    Card(
-                                      clipBehavior: Clip.antiAlias,
-                                      color: AppColor.backgroundColorPrimary,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      child: SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: SingleChildScrollView(
-                                          scrollDirection: Axis.vertical,
-                                          child: DataTable(
-                                            dataRowMaxHeight: 60,
-                                            dataRowMinHeight: 30,
-                                            columnSpacing: 43,
-                                            headingRowColor:
-                                                WidgetStateProperty.resolveWith(
-                                                  (states) => AppColor.primary,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: DataTable2(
+                              empty: Text("Tidak Ditemukan Data"),
+                              fixedLeftColumns: 2,
+                              dataRowHeight: 120.h,
+                              columnSpacing: 10,
+
+                              headingRowColor: WidgetStateProperty.resolveWith(
+                                (states) => AppColor.primary,
+                              ),
+                              headingTextStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              border: TableBorder.all(
+                                color: Colors.black,
+                                width: 0.5,
+                              ),
+                              columns: [
+                                DataColumn2(
+                                  label: Center(child: Text('No')),
+                                  fixedWidth: 5.w,
+                                ),
+                                DataColumn2(
+                                  label: Center(child: Text('Customer')),
+                                ),
+                                DataColumn2(
+                                  label: Center(child: Text('Nomor HP')),
+                                ),
+                                DataColumn2(
+                                  label: Center(child: Text('Tanggal & Waktu')),
+                                  size: ColumnSize.L,
+                                  minWidth: 500.w,
+                                ),
+                                DataColumn2(
+                                  label: Center(child: Text('Status Pesanan')),
+                                  minWidth: 250.w,
+                                ),
+                                DataColumn2(
+                                  label: Center(child: Text('Aksi')),
+                                  minWidth: 480.w,
+                                ),
+                              ],
+                              rows:
+                                  filteredList.asMap().entries.map((entry) {
+                                    final index = entry.key;
+                                    final order = entry.value;
+
+                                    return DataRow(
+                                      cells: [
+                                        DataCell(Text("${index + 1}")),
+                                        DataCell(Text(order.customerName)),
+                                        DataCell(
+                                          Text(order.phoneNumber.toString()),
+                                        ),
+                                        DataCell(
+                                          Column(
+                                            children: [
+                                              Gap(5),
+                                              Text(
+                                                formatTime(
+                                                  order.transactionTime,
                                                 ),
-                                            headingTextStyle: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            border: TableBorder.all(
-                                              color: Colors.black,
-                                              width: 0.5,
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(16),
                                               ),
-                                            ),
-                                            columns: const [
-                                              DataColumn(label: Text('No')),
-                                              DataColumn(
-                                                label: Text('Customer'),
+                                              Gap(5),
+                                              Center(
+                                                child: Container(
+                                                  width:
+                                                      order.transactionCompleteTime !=
+                                                              null
+                                                          ? 400.w
+                                                          : 200.w,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 4,
+                                                      ),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        order.transactionCompleteTime !=
+                                                                null
+                                                            ? Colors.green
+                                                                .withOpacity(
+                                                                  0.1,
+                                                                )
+                                                            : Colors.orange
+                                                                .withOpacity(
+                                                                  0.1,
+                                                                ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                  child: Center(
+                                                    child: Text(
+                                                      order.transactionCompleteTime !=
+                                                              null
+                                                          ? "Selesai • ${formatTime(order.transactionCompleteTime!)}"
+                                                          : "Diproses",
+                                                      style: TextStyle(
+                                                        color:
+                                                            order.transactionCompleteTime !=
+                                                                    null
+                                                                ? Colors.green
+                                                                : Colors.orange,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                               ),
-                                              DataColumn(
-                                                label: Text('Nomor HP'),
-                                              ),
-                                              DataColumn(
-                                                label: Text('Tanggal & Waktu'),
-                                              ),
-                                              DataColumn(
-                                                label: Text('Status Pesanan'),
-                                              ),
-                                              DataColumn(label: Text('Aksi')),
                                             ],
-                                            rows:
-                                                orders.asMap().entries.map((
-                                                  entry,
-                                                ) {
-                                                  final index = entry.key;
-                                                  final order = entry.value;
-
-                                                  return DataRow(
-                                                    cells: [
-                                                      DataCell(
-                                                        Text("${index + 1}"),
-                                                      ),
-                                                      DataCell(
-                                                        Text(
-                                                          order.customerName,
-                                                        ),
-                                                      ),
-                                                      DataCell(
-                                                        Text(
-                                                          order.phoneNumber
-                                                              .toString(),
-                                                        ),
-                                                      ),
-                                                      DataCell(
-                                                        Column(
-                                                          children: [
-                                                            Gap(5),
-                                                            Text(
-                                                              formatTime(
-                                                                order
-                                                                    .transactionTime,
-                                                              ),
-                                                            ),
-                                                            Gap(5),
-                                                            Container(
-                                                              padding:
-                                                                  const EdgeInsets.symmetric(
-                                                                    horizontal:
-                                                                        10,
-                                                                    vertical: 4,
-                                                                  ),
-                                                              decoration: BoxDecoration(
-                                                                color:
-                                                                    order.transactionCompleteTime !=
-                                                                            null
-                                                                        ? Colors
-                                                                            .green
-                                                                            .withOpacity(
-                                                                              0.1,
-                                                                            )
-                                                                        : Colors
-                                                                            .orange
-                                                                            .withOpacity(
-                                                                              0.1,
-                                                                            ),
-                                                                borderRadius:
-                                                                    BorderRadius.circular(
-                                                                      12,
-                                                                    ),
-                                                              ),
-                                                              child: Text(
-                                                                order.transactionCompleteTime !=
-                                                                        null
-                                                                    ? "Selesai • ${formatTime(order.transactionCompleteTime!)}"
-                                                                    : "Diproses",
-                                                                style: TextStyle(
-                                                                  color:
-                                                                      order.transactionCompleteTime !=
-                                                                              null
-                                                                          ? Colors
-                                                                              .green
-                                                                          : Colors
-                                                                              .orange,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      DataCell(
-                                                        order.isOrderComplete ==
-                                                                3
-                                                            ? orderStatusRow(
-                                                              icon:
-                                                                  Icons
-                                                                      .check_circle,
-                                                              color:
-                                                                  Colors.green,
-                                                              text: "Selesai",
-                                                            )
-                                                            : Theme(
-                                                              data: ThemeData(
-                                                                canvasColor:
-                                                                    AppColor
-                                                                        .backgroundColorPrimary,
-                                                              ),
-                                                              child: DropdownButton<
-                                                                String
-                                                              >(
-                                                                isExpanded:
-                                                                    true,
-                                                                value:
-                                                                    order
-                                                                        .isOrderComplete
-                                                                        .toString(),
-                                                                items: [
-                                                                  DropdownMenuItem(
-                                                                    value: '0',
-                                                                    child: orderStatusRow(
-                                                                      icon:
-                                                                          FontAwesome
-                                                                              .clock_solid,
-                                                                      color:
-                                                                          Colors
-                                                                              .orange,
-                                                                      text:
-                                                                          "Antrian",
-                                                                    ),
-                                                                  ),
-                                                                  DropdownMenuItem(
-                                                                    value: '1',
-                                                                    child: orderStatusRow(
-                                                                      icon:
-                                                                          Icons
-                                                                              .work,
-                                                                      color:
-                                                                          Colors
-                                                                              .blue,
-                                                                      text:
-                                                                          "Proses",
-                                                                    ),
-                                                                  ),
-                                                                  DropdownMenuItem(
-                                                                    value: '2',
-                                                                    child: orderStatusRow(
-                                                                      icon:
-                                                                          Icons
-                                                                              .shopping_bag,
-                                                                      color:
-                                                                          Colors
-                                                                              .purple,
-                                                                      text:
-                                                                          "Siap Diambil",
-                                                                    ),
-                                                                  ),
-                                                                  DropdownMenuItem(
-                                                                    value: '3',
-                                                                    child: orderStatusRow(
-                                                                      icon:
-                                                                          Icons
-                                                                              .check_circle,
-                                                                      color:
-                                                                          Colors
-                                                                              .green,
-                                                                      text:
-                                                                          "Selesai",
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                                onChanged: (
-                                                                  newValue,
-                                                                ) {
-                                                                  AwesomeDialog(
-                                                                    context:
-                                                                        context,
-                                                                    width: 400,
-                                                                    dialogBackgroundColor:
-                                                                        AppColor
-                                                                            .backgroundColorPrimary,
-                                                                    headerAnimationLoop:
-                                                                        false,
-                                                                    dismissOnBackKeyPress:
-                                                                        false,
-                                                                    dismissOnTouchOutside:
-                                                                        false,
-                                                                    keyboardAware:
-                                                                        true,
-                                                                    dialogType:
-                                                                        DialogType
-                                                                            .noHeader,
-                                                                    btnCancelText:
-                                                                        "Tidak",
-                                                                    btnOkText:
-                                                                        "Iya",
-                                                                    title:
-                                                                        "Pemberitahuan",
-                                                                    desc:
-                                                                        "Apakah anda yakin ingin melakukan perubahan status pemesanan?",
-                                                                    btnOkOnPress: () async {
-                                                                      setState(() {
-                                                                        _isLoading =
-                                                                            true;
-                                                                      });
-                                                                      try {
-                                                                        final success = await ApiService().updateOrderStatus(
-                                                                          order
-                                                                              .id,
-                                                                          int.parse(
-                                                                            newValue!,
-                                                                          ),
-                                                                          await token,
-                                                                        );
-                                                                        if (!context
-                                                                            .mounted) {
-                                                                          return;
-                                                                        }
-                                                                        if (success) {
-                                                                          ScaffoldMessenger.of(
-                                                                            context,
-                                                                          ).showSnackBar(
-                                                                            const SnackBar(
-                                                                              backgroundColor:
-                                                                                  Colors.green,
-                                                                              content: Text(
-                                                                                'Status berhasil diupdate',
-                                                                              ),
-                                                                            ),
-                                                                          );
-
-                                                                          await _loadData();
-                                                                        } else {
-                                                                          ScaffoldMessenger.of(
-                                                                            context,
-                                                                          ).showSnackBar(
-                                                                            const SnackBar(
-                                                                              backgroundColor:
-                                                                                  Colors.red,
-                                                                              content: Text(
-                                                                                'Gagal update status',
-                                                                              ),
-                                                                            ),
-                                                                          );
-                                                                        }
-                                                                      } catch (
-                                                                        e
-                                                                      ) {
-                                                                        print(
-                                                                          e,
-                                                                        );
-                                                                      } finally {
-                                                                        if (context
-                                                                            .mounted) {
-                                                                          setState(() {
-                                                                            _isLoading =
-                                                                                false;
-                                                                          });
-                                                                        }
-                                                                      }
-                                                                    },
-                                                                    btnCancelOnPress:
-                                                                        () {},
-                                                                  ).show();
-                                                                },
-                                                              ),
-                                                            ),
-                                                      ),
-
-                                                      DataCell(
-                                                        Row(
-                                                          children: [
-                                                            IconButton(
-                                                              onPressed: () async {
-                                                                setState(() {
-                                                                  _isLoading =
-                                                                      true;
-                                                                });
-                                                                try {
-                                                                  final api =
-                                                                      ApiService();
-                                                                  final items = await api
-                                                                      .getOrderItemDetailsWithProduct(
-                                                                        order
-                                                                            .id,
-                                                                        await token,
-                                                                      );
-                                                                  final isConnected =
-                                                                      await PrintBluetoothThermal
-                                                                          .connectionStatus;
-
-                                                                  if (!isConnected) {
-                                                                    if (context
-                                                                        .mounted) {
-                                                                      ScaffoldMessenger.of(
-                                                                        context,
-                                                                      ).showSnackBar(
-                                                                        SnackBar(
-                                                                          content: Text(
-                                                                            'Printer belum terhubung. Sambungkan terlebih dahulu.',
-                                                                          ),
-                                                                          backgroundColor:
-                                                                              Colors.red,
-                                                                        ),
-                                                                      );
-                                                                    }
-                                                                    return;
-                                                                  }
-
-                                                                  await showPrintingDialog(
-                                                                    context:
-                                                                        context,
-                                                                    order:
-                                                                        order,
-                                                                    items:
-                                                                        items,
-                                                                  );
-                                                                } catch (e) {
-                                                                  print(e);
-                                                                } finally {
-                                                                  if (context
-                                                                      .mounted) {
-                                                                    setState(() {
-                                                                      _isLoading =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                }
-                                                              },
-                                                              icon: Icon(
-                                                                Icons.print,
-                                                              ),
-                                                            ),
-                                                            IconButton(
-                                                              onPressed: () async {
-                                                                setState(() {
-                                                                  _isLoading =
-                                                                      true;
-                                                                });
-                                                                try {
-                                                                  final phoneNumber =
-                                                                      order
-                                                                          .phoneNumber
-                                                                          .toString();
-                                                                  final statusMap = {
-                                                                    '0':
-                                                                        'Sedang dalam antrian',
-                                                                    '1':
-                                                                        'Sedang diproses',
-                                                                    '2':
-                                                                        'Siap diambil',
-                                                                    '3':
-                                                                        'Sudah selesai',
-                                                                  };
-                                                                  final status =
-                                                                      statusMap[order
-                                                                          .isOrderComplete
-                                                                          .toString()] ??
-                                                                      'Belum diketahui';
-                                                                  final api =
-                                                                      ApiService();
-                                                                  final items = await api
-                                                                      .getOrderItemDetailsWithProduct(
-                                                                        order
-                                                                            .id,
-                                                                        await token,
-                                                                      );
-                                                                  final message =
-                                                                      generateOrderMessageText(
-                                                                        order:
-                                                                            order,
-                                                                        items:
-                                                                            items,
-                                                                        status:
-                                                                            status,
-                                                                      );
-                                                                  final whatsappUrl =
-                                                                      Uri.parse(
-                                                                        'https://wa.me/62$phoneNumber?text=${Uri.encodeComponent(message)}',
-                                                                      );
-                                                                  if (order.phoneNumber ==
-                                                                          null ||
-                                                                      order
-                                                                          .phoneNumber!
-                                                                          .isEmpty) {
-                                                                    ScaffoldMessenger.of(
-                                                                      context,
-                                                                    ).showSnackBar(
-                                                                      SnackBar(
-                                                                        backgroundColor:
-                                                                            Colors.red,
-                                                                        content:
-                                                                            Text(
-                                                                              'Gagal membuka WhatsApp tidak ada No. HP',
-                                                                            ),
-                                                                      ),
-                                                                    );
-                                                                  } else {
-                                                                    if (await canLaunchUrl(
-                                                                      whatsappUrl,
-                                                                    )) {
-                                                                      await launchUrl(
-                                                                        whatsappUrl,
-                                                                        mode:
-                                                                            LaunchMode.externalApplication,
-                                                                      );
-                                                                    } else {
-                                                                      ScaffoldMessenger.of(
-                                                                        context,
-                                                                      ).showSnackBar(
-                                                                        SnackBar(
-                                                                          backgroundColor:
-                                                                              Colors.red,
-                                                                          content: Text(
-                                                                            'Gagal membuka WhatsApp',
-                                                                          ),
-                                                                        ),
-                                                                      );
-                                                                    }
-                                                                  }
-                                                                } catch (e) {
-                                                                  print(e);
-                                                                } finally {
-                                                                  if (context
-                                                                      .mounted) {
-                                                                    setState(() {
-                                                                      _isLoading =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                }
-                                                              },
-                                                              icon: Icon(
-                                                                FontAwesome
-                                                                    .whatsapp_brand,
-                                                                color:
-                                                                    Colors
-                                                                        .green,
-                                                              ),
-                                                            ),
-                                                            IconButton(
-                                                              icon: Icon(
-                                                                Icons
-                                                                    .info_outline,
-                                                                color:
-                                                                    Colors.blue,
-                                                              ),
-                                                              onPressed: () async {
-                                                                setState(() {
-                                                                  _isLoading =
-                                                                      true;
-                                                                });
-                                                                try {
-                                                                  final db =
-                                                                      ApiService();
-                                                                  final items = await db
-                                                                      .getOrderItemDetailsWithProduct(
-                                                                        order
-                                                                            .id,
-                                                                        await token,
-                                                                      );
-                                                                  showOrderDetailDialog(
-                                                                    context,
-                                                                    order,
-                                                                    items,
-                                                                  );
-                                                                } catch (e) {
-                                                                  ScaffoldMessenger.of(
-                                                                    context,
-                                                                  ).showSnackBar(
-                                                                    SnackBar(
-                                                                      content: Text(
-                                                                        "Tidak dapat ",
-                                                                      ),
-                                                                    ),
-                                                                  );
-                                                                } finally {
-                                                                  if (context
-                                                                      .mounted) {
-                                                                    setState(() {
-                                                                      _isLoading =
-                                                                          false;
-                                                                    });
-                                                                  }
-                                                                }
-                                                              },
-                                                            ),
-                                                            if (order
-                                                                    .isPaymentComplete
-                                                                    .toString() ==
-                                                                '0')
-                                                              IconButton(
-                                                                onPressed: () async {
-                                                                  if (order
-                                                                          .isPaymentComplete ==
-                                                                      0) {
-                                                                    final result = await Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder:
-                                                                            (
-                                                                              _,
-                                                                            ) => UpdatePaymentScreen(
-                                                                              orderData:
-                                                                                  order,
-                                                                            ),
-                                                                      ),
-                                                                    );
-                                                                    if (result ==
-                                                                        true) {
-                                                                      _loadData();
-                                                                      setState(
-                                                                        () {},
-                                                                      );
-                                                                    }
-                                                                  }
-                                                                },
-                                                                icon: Icon(
-                                                                  Icons
-                                                                      .payment_rounded,
-                                                                  color:
-                                                                      Colors
-                                                                          .red,
-                                                                ),
-                                                              ),
-                                                            if (order
-                                                                    .isOrderComplete !=
-                                                                3)
-                                                              IconButton(
-                                                                icon: Icon(
-                                                                  Icons.delete,
-                                                                  color:
-                                                                      Colors
-                                                                          .red,
-                                                                ),
-                                                                onPressed:
-                                                                    () async {
-                                                                      deleteOrderDialog(
-                                                                        context,
-                                                                        order
-                                                                            .id,
-                                                                      );
-                                                                    },
-                                                              ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );
-                                                }).toList(),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                                        DataCell(
+                                          order.isOrderComplete == 3
+                                              ? orderStatusRow(
+                                                icon: Icons.check_circle,
+                                                color: Colors.green,
+                                                text: "Selesai",
+                                              )
+                                              : Theme(
+                                                data: ThemeData(
+                                                  canvasColor:
+                                                      AppColor
+                                                          .backgroundColorPrimary,
+                                                ),
+                                                child: DropdownButton<String>(
+                                                  isExpanded: true,
+                                                  value:
+                                                      order.isOrderComplete
+                                                          .toString(),
+                                                  items: [
+                                                    DropdownMenuItem(
+                                                      value: '0',
+                                                      child: orderStatusRow(
+                                                        icon:
+                                                            FontAwesome
+                                                                .clock_solid,
+                                                        color: Colors.orange,
+                                                        text: "Antrian",
+                                                      ),
+                                                    ),
+                                                    DropdownMenuItem(
+                                                      value: '1',
+                                                      child: orderStatusRow(
+                                                        icon: Icons.work,
+                                                        color: Colors.blue,
+                                                        text: "Proses",
+                                                      ),
+                                                    ),
+                                                    DropdownMenuItem(
+                                                      value: '2',
+                                                      child: orderStatusRow(
+                                                        icon:
+                                                            Icons.shopping_bag,
+                                                        color: Colors.purple,
+                                                        text: "Siap Diambil",
+                                                      ),
+                                                    ),
+                                                    DropdownMenuItem(
+                                                      value: '3',
+                                                      child: orderStatusRow(
+                                                        icon:
+                                                            Icons.check_circle,
+                                                        color: Colors.green,
+                                                        text: "Selesai",
+                                                      ),
+                                                    ),
+                                                  ],
+                                                  onChanged: (newValue) {
+                                                    AwesomeDialog(
+                                                      context: context,
+                                                      width: 400,
+                                                      dialogBackgroundColor:
+                                                          AppColor
+                                                              .backgroundColorPrimary,
+                                                      headerAnimationLoop:
+                                                          false,
+                                                      dismissOnBackKeyPress:
+                                                          false,
+                                                      dismissOnTouchOutside:
+                                                          false,
+                                                      keyboardAware: true,
+                                                      dialogType:
+                                                          DialogType.noHeader,
+                                                      btnCancelText: "Tidak",
+                                                      btnOkText: "Iya",
+                                                      title: "Pemberitahuan",
+                                                      desc:
+                                                          "Apakah anda yakin ingin melakukan perubahan status pemesanan?",
+                                                      btnOkOnPress: () async {
+                                                        setState(() {
+                                                          _isLoading = true;
+                                                        });
+                                                        try {
+                                                          final success =
+                                                              await ApiService()
+                                                                  .updateOrderStatus(
+                                                                    order.id,
+                                                                    int.parse(
+                                                                      newValue!,
+                                                                    ),
+                                                                    await token,
+                                                                  );
+                                                          if (!context
+                                                              .mounted) {
+                                                            return;
+                                                          }
+                                                          if (success) {
+                                                            ScaffoldMessenger.of(
+                                                              context,
+                                                            ).showSnackBar(
+                                                              const SnackBar(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .green,
+                                                                content: Text(
+                                                                  'Status berhasil diupdate',
+                                                                ),
+                                                              ),
+                                                            );
+
+                                                            await _loadData();
+                                                          } else {
+                                                            ScaffoldMessenger.of(
+                                                              context,
+                                                            ).showSnackBar(
+                                                              const SnackBar(
+                                                                backgroundColor:
+                                                                    Colors.red,
+                                                                content: Text(
+                                                                  'Gagal update status',
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+                                                        } catch (e) {
+                                                          print(e);
+                                                        } finally {
+                                                          if (context.mounted) {
+                                                            setState(() {
+                                                              _isLoading =
+                                                                  false;
+                                                            });
+                                                          }
+                                                        }
+                                                      },
+                                                      btnCancelOnPress: () {},
+                                                    ).show();
+                                                  },
+                                                ),
+                                              ),
+                                        ),
+
+                                        DataCell(
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    _isLoading = true;
+                                                  });
+                                                  try {
+                                                    final api = ApiService();
+                                                    final items = await api
+                                                        .getOrderItemDetailsWithProduct(
+                                                          order.id,
+                                                          await token,
+                                                        );
+                                                    final isConnected =
+                                                        await PrintBluetoothThermal
+                                                            .connectionStatus;
+
+                                                    if (!isConnected) {
+                                                      if (context.mounted) {
+                                                        ScaffoldMessenger.of(
+                                                          context,
+                                                        ).showSnackBar(
+                                                          SnackBar(
+                                                            content: Text(
+                                                              'Printer belum terhubung. Sambungkan terlebih dahulu.',
+                                                            ),
+                                                            backgroundColor:
+                                                                Colors.red,
+                                                          ),
+                                                        );
+                                                      }
+                                                      return;
+                                                    }
+
+                                                    await showPrintingDialog(
+                                                      context: context,
+                                                      order: order,
+                                                      items: items,
+                                                    );
+                                                  } catch (e) {
+                                                    print(e);
+                                                  } finally {
+                                                    if (context.mounted) {
+                                                      setState(() {
+                                                        _isLoading = false;
+                                                      });
+                                                    }
+                                                  }
+                                                },
+                                                icon: Icon(Icons.print),
+                                              ),
+                                              IconButton(
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    _isLoading = true;
+                                                  });
+                                                  try {
+                                                    final phoneNumber =
+                                                        order.phoneNumber
+                                                            .toString();
+                                                    final statusMap = {
+                                                      '0':
+                                                          'Sedang dalam antrian',
+                                                      '1': 'Sedang diproses',
+                                                      '2': 'Siap diambil',
+                                                      '3': 'Sudah selesai',
+                                                    };
+                                                    final status =
+                                                        statusMap[order
+                                                            .isOrderComplete
+                                                            .toString()] ??
+                                                        'Belum diketahui';
+                                                    final api = ApiService();
+                                                    final items = await api
+                                                        .getOrderItemDetailsWithProduct(
+                                                          order.id,
+                                                          await token,
+                                                        );
+                                                    final message =
+                                                        generateOrderMessageText(
+                                                          order: order,
+                                                          items: items,
+                                                          status: status,
+                                                        );
+                                                    final whatsappUrl = Uri.parse(
+                                                      'https://wa.me/62$phoneNumber?text=${Uri.encodeComponent(message)}',
+                                                    );
+                                                    if (order.phoneNumber ==
+                                                            null ||
+                                                        order
+                                                            .phoneNumber!
+                                                            .isEmpty) {
+                                                      ScaffoldMessenger.of(
+                                                        context,
+                                                      ).showSnackBar(
+                                                        SnackBar(
+                                                          backgroundColor:
+                                                              Colors.red,
+                                                          content: Text(
+                                                            'Gagal membuka WhatsApp tidak ada No. HP',
+                                                          ),
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      if (await canLaunchUrl(
+                                                        whatsappUrl,
+                                                      )) {
+                                                        await launchUrl(
+                                                          whatsappUrl,
+                                                          mode:
+                                                              LaunchMode
+                                                                  .externalApplication,
+                                                        );
+                                                      } else {
+                                                        ScaffoldMessenger.of(
+                                                          context,
+                                                        ).showSnackBar(
+                                                          SnackBar(
+                                                            backgroundColor:
+                                                                Colors.red,
+                                                            content: Text(
+                                                              'Gagal membuka WhatsApp',
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                    }
+                                                  } catch (e) {
+                                                    print(e);
+                                                  } finally {
+                                                    if (context.mounted) {
+                                                      setState(() {
+                                                        _isLoading = false;
+                                                      });
+                                                    }
+                                                  }
+                                                },
+                                                icon: Icon(
+                                                  FontAwesome.whatsapp_brand,
+                                                  color: Colors.green,
+                                                ),
+                                              ),
+                                              IconButton(
+                                                icon: Icon(
+                                                  Icons.info_outline,
+                                                  color: Colors.blue,
+                                                ),
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    _isLoading = true;
+                                                  });
+                                                  try {
+                                                    final db = ApiService();
+                                                    final items = await db
+                                                        .getOrderItemDetailsWithProduct(
+                                                          order.id,
+                                                          await token,
+                                                        );
+                                                    showOrderDetailDialog(
+                                                      context,
+                                                      order,
+                                                      items,
+                                                    );
+                                                  } catch (e) {
+                                                    ScaffoldMessenger.of(
+                                                      context,
+                                                    ).showSnackBar(
+                                                      SnackBar(
+                                                        content: Text(
+                                                          "Tidak dapat ",
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } finally {
+                                                    if (context.mounted) {
+                                                      setState(() {
+                                                        _isLoading = false;
+                                                      });
+                                                    }
+                                                  }
+                                                },
+                                              ),
+                                              if (order.isPaymentComplete
+                                                      .toString() ==
+                                                  '0')
+                                                IconButton(
+                                                  onPressed: () async {
+                                                    if (order
+                                                            .isPaymentComplete ==
+                                                        0) {
+                                                      final result = await Navigator.push(
+                                                        context,
+                                                        PageTransition(
+                                                          duration:
+                                                              Durations.medium4,
+                                                          type:
+                                                              PageTransitionType
+                                                                  .rightToLeft,
+                                                          child:
+                                                              UpdatePaymentScreen(
+                                                                orderData:
+                                                                    order,
+                                                              ),
+                                                        ),
+                                                      );
+                                                      if (result == true) {
+                                                        _loadData();
+                                                        setState(() {});
+                                                      }
+                                                    }
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.payment_rounded,
+                                                    color: Colors.red,
+                                                  ),
+                                                ),
+                                              if (order.isOrderComplete != 3)
+                                                IconButton(
+                                                  icon: Icon(
+                                                    Icons.delete,
+                                                    color: Colors.red,
+                                                  ),
+                                                  onPressed: () async {
+                                                    deleteOrderDialog(
+                                                      context,
+                                                      order.id,
+                                                    );
+                                                  },
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }).toList(),
                             ),
                           ),
                         );

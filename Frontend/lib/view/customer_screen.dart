@@ -8,6 +8,7 @@ import 'package:aplikasi_demo_test/utils/search_bar_widget.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
@@ -95,7 +96,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
       title: "Hapus Data User",
       desc: "Apakah anda yakin untuk mengapus data pelanggan ini?",
       dialogType: DialogType.warning,
-      width: 550,
+      width: 800.w,
       headerAnimationLoop: false,
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
