@@ -1,5 +1,5 @@
 class Variable {
-  static const String urlWeb = "http://192.168.4.160:8000";
+  static const String urlWeb = "https://ocelaundry.my.id";
 
   static String get baseUrl => "$urlWeb/api";
   static String get backendBaseUrl => "$urlWeb/";

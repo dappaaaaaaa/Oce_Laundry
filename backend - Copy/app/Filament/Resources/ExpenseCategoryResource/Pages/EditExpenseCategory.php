@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Filament\Resources\ExpenseCategoryResource\Pages;
+
+use App\Filament\Resources\ExpenseCategoryResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+
+class EditExpenseCategory extends EditRecord
+{
+    protected static string $resource = ExpenseCategoryResource::class;
+    public function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\Action::make('kembali')
+                ->label('Kembali')
+                ->url($this->getResource()::getUrl('index')) // Mengarahkan ke daftar stok
+                ->icon('heroicon-m-arrow-left'),
+
+            Actions\DeleteAction::make(),
+        ];
+    }
+}

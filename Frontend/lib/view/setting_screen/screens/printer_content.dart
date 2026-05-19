@@ -129,65 +129,120 @@ class _PrinterContentState extends State<PrinterContent> {
             const SizedBox(height: 10),
             Row(
               children: [
-                ElevatedButton(
-                  onPressed: _getBondedDevices,
-                  style: OutlinedButton.styleFrom(
-                    backgroundColor: AppColor.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    maximumSize: Size(215, 50),
-                    minimumSize: Size(215, 40),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      if (_progress)
-                        LoadingAnimationWidget.threeArchedCircle(
-                          color: Colors.white,
-                          size: 15,
+
+                Expanded(
+                  child: SizedBox(
+                    height: 60.h,
+
+                    child: ElevatedButton(
+                      onPressed: _getBondedDevices,
+
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColor.primary,
+                        foregroundColor: Colors.white,
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
                         ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                        ),
+                      ),
+
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            _progress ? _msjprogress : "Cari",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 30.sp,
+
+                          if (_progress)
+                            Padding(
+                              padding: EdgeInsets.only(right: 8.w),
+                              child: LoadingAnimationWidget.threeArchedCircle(
+                                color: Colors.white,
+                                size: 18.sp,
+                              ),
+                            ),
+
+                          Flexible(
+                            child: Text(
+                              _progress ? _msjprogress : "Cari",
+
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 28.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
-                          SizedBox(width: 5),
-                          Icon(_progress ? null : Icons.search),
+
+                          SizedBox(width: 8.w),
+
+                          if (!_progress)
+                            Icon(
+                              Icons.search,
+                              size: 30.sp,
+                            ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: connected ? _disconnect : null,
-                  style: OutlinedButton.styleFrom(
-                    disabledBackgroundColor: Colors.grey,
-                    backgroundColor: AppColor.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    maximumSize: Size(215, 50),
-                    minimumSize: Size(215, 40),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        "Putuskan Sambungan",
-                        style: TextStyle(color: Colors.white, fontSize: 30.sp),
+
+                SizedBox(width: 12.w),
+
+                Expanded(
+                  child: SizedBox(
+                    height: 60.h,
+
+                    child: ElevatedButton(
+                      onPressed: connected ? _disconnect : null,
+
+                      style: ElevatedButton.styleFrom(
+                        disabledBackgroundColor: Colors.grey,
+                        backgroundColor: AppColor.primary,
+                        foregroundColor: Colors.white,
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                        ),
                       ),
-                      Gap(8),
-                      Icon(Icons.link_off, color: Colors.white),
-                    ],
+
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+
+                          Flexible(
+                            child: Text(
+                              "Putuskan Sambungan",
+
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 28.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(width: 8.w),
+
+                          Icon(
+                            Icons.link_off,
+                            size: 30.sp,
+                            color: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ],

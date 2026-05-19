@@ -89,8 +89,8 @@ String generateOrderMessageText({
 
   if (status == 'Antrian' || status == 'Diproses') {
     final buffer = StringBuffer();
-    buffer.writeln('Qlaundry');
-    buffer.writeln('Jl. Tani, Bukit Batu Singkawang');
+    buffer.writeln('Oce Laundry');
+    buffer.writeln('Jl. Prof. Dr. Hamka ');
     buffer.writeln(divider);
     buffer.writeln('No Pemesanan: *${breakDigits(orderNumber)}*');
     buffer.writeln('Tanggal: ${formatTime(order.transactionTime)}');

@@ -849,7 +849,7 @@ class HistoryOrderState extends State<HistoryOrder>
                                 ),
                                 DataColumn2(
                                   label: Center(child: Text('Aksi')),
-                                  minWidth: 500.w,
+                                  minWidth: 615.w,
                                 ),
                               ],
                               rows:

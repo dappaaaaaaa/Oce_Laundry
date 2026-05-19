@@ -161,14 +161,14 @@ class _CustomerScreenState extends State<CustomerScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SearchBarWidget(
-                          controller: _searchBarController,
-                          onChanged: _filterCustomers,
-                        ),
-                        Gap(10),
                         Text(
                           "Daftar Pelanggan",
                           style: TextStyle(fontSize: 50.sp),
+                        ),
+                        Gap(10),
+                        SearchBarWidget(
+                          controller: _searchBarController,
+                          onChanged: _filterCustomers,
                         ),
                         Gap(10),
                         Expanded(
@@ -366,7 +366,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                       return null;
                                     },
                                   ),
-                                  SizedBox(height: 10),
+                                  SizedBox(height: 20),
                                   Text(
                                     "Alamat Customer",
                                     style: TextStyle(fontSize: 30.sp),
@@ -376,14 +376,14 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                     style: TextStyle(fontSize: 30.sp),
                                     controller: _customerAddressController,
                                     keyboardType: TextInputType.streetAddress,
-                                    maxLines: 3,
+                                    // maxLines: 3,
                                     decoration:
                                         CustomTextFieldStyle.inputDecoration(
                                           icon: Icon(Icons.home),
                                           hintText: "Masukan Alamat Customer",
                                         ),
                                   ),
-                                  SizedBox(height: 10),
+                                  SizedBox(height: 20),
 
                                   Row(
                                     mainAxisAlignment:

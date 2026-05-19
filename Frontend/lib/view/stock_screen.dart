@@ -260,39 +260,55 @@ class _StockScreenState extends State<StockScreen> {
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(
                   child: Row(
                     children: [
                       SizedBox(
-                        width: 300,
+                        width: 930.w,
                         child: SearchBarWidget(
                           controller: searchController,
                           hintText: "Cari Data Stok",
                           onChanged: searchData,
                         ),
                       ),
-                      Gap(100),
-                      DropdownButton<String>(
-                        dropdownColor: AppColor.backgroundColorPrimary,
-                        value: selectedSort,
-                        hint: Text("Urutkan"),
-                        items:
-                            [
-                              "Nama A-Z",
-                              "Nama Z-A",
-                              "Kuantitas Terbesar",
-                              "Kuantitas Terkecil",
-                            ].map((e) {
-                              return DropdownMenuItem(value: e, child: Text(e));
-                            }).toList(),
-                        onChanged: (value) {
-                          if (value != null) {
+                      Gap(20),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withValues(alpha: 0.1),
+                          
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        child: PopupMenuButton<String>(
+                          icon: Icon(
+                            Icons.sort,
+                            color: AppColor.primary,
+                          ),
+                          color: AppColor.backgroundColorPrimary,
+                          onSelected: (value) {
                             sortData(value);
-                          }
-                        },
-                      ),
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: "Nama A-Z",
+                              child: Text("Nama A-Z"),
+                            ),
+                            PopupMenuItem(
+                              value: "Nama Z-A",
+                              child: Text("Nama Z-A"),
+                            ),
+                            PopupMenuItem(
+                              value: "Kuantitas Terbesar",
+                              child: Text("Kuantitas Terbesar"),
+                            ),
+                            PopupMenuItem(
+                              value: "Kuantitas Terkecil",
+                              child: Text("Kuantitas Terkecil"),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -321,7 +337,7 @@ class _StockScreenState extends State<StockScreen> {
                                         crossAxisCount: 3,
                                         mainAxisSpacing: 5,
                                         crossAxisSpacing: 5,
-                                        childAspectRatio: 3 / 4.8,
+                                        childAspectRatio: 3 / 4,
                                       ),
                                   itemCount: filteredList.length,
                                   itemBuilder: (context, index) {
@@ -339,7 +355,7 @@ class _StockScreenState extends State<StockScreen> {
                                           children: [
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                  MainAxisAlignment.end,
                                               children: [
                                                 IconButton(
                                                   onPressed: () async {
@@ -429,14 +445,14 @@ class _StockScreenState extends State<StockScreen> {
                                                       ),
                                                     ],
                                                   ),
-                                                  Gap(10),
+                                                  Gap(2),
                                                   Text(
                                                     item["keterangan"] ?? "",
                                                     style: TextStyle(
-                                                      fontSize: 12,
+                                                      fontSize: 10,
                                                       color: Colors.grey,
                                                     ),
-                                                    maxLines: 2,
+                                                    maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                   ),

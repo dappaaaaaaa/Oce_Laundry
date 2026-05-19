@@ -70,7 +70,7 @@ Future<void> cetakStrukLaundryEscPos({
   // =========================
 
   bytes += generator.text(
-    'QLaundry',
+    'Oce Laundry',
     styles: PosStyles(
       align: PosAlign.center,
       bold: true,
@@ -81,8 +81,8 @@ Future<void> cetakStrukLaundryEscPos({
   );
 
   bytes += generator.text(
-    'Jl. Tani, Bukit Batu Singkawang\n'
-    'Telp: 0895-3283-64478',
+    'Jl. Prof. Dr. Hamka\n'
+    'Telp: 0896-9349-6049',
     styles: PosStyles(align: PosAlign.center),
   );
 
