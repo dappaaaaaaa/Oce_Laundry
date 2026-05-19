@@ -51,6 +51,13 @@ class _MainwrapperState extends State<Mainwrapper> {
   // *Fungsi untuk mengonfirmasi logout
   Future<void> _confirmLogout() async {
     AwesomeDialog(
+      descTextStyle: TextStyle(fontSize: 30.sp),
+      titleTextStyle: TextStyle(fontSize: 34.sp, fontWeight: FontWeight.w600),
+      buttonsTextStyle: TextStyle(
+        fontSize: 30.sp,
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+      ),
       context: context,
       dialogBackgroundColor: AppColor.backgroundColorPrimary,
       title: "Logout",
@@ -59,7 +66,6 @@ class _MainwrapperState extends State<Mainwrapper> {
       width: 400,
       headerAnimationLoop: false,
       dismissOnBackKeyPress: false,
-      dismissOnTouchOutside: false,
       btnOkText: "Logout",
       btnOkOnPress: () {
         _logout();
@@ -164,6 +170,7 @@ class _MainwrapperState extends State<Mainwrapper> {
                   ),
                   child: const Icon(
                     Icons.exit_to_app,
+                    size: 24,
                     color: Color.fromARGB(255, 255, 255, 255),
                   ),
                 ),

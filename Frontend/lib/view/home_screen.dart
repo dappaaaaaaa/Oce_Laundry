@@ -98,11 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
         });
 
         return AlertDialog(
+          contentTextStyle: TextStyle(fontSize: 30.sp, color: Colors.black),
+          titleTextStyle: TextStyle(fontSize: 36.sp, color: Colors.black),
           title: const Text('Edit Berat'),
           backgroundColor: AppColor.backgroundColorPrimary,
           content: Form(
             key: _formKey,
             child: TextFormField(
+              style: TextStyle(fontSize: 30.sp, color: Colors.black),
               controller: controller,
               focusNode: focusNode,
               keyboardType: TextInputType.number,
@@ -123,9 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
+              child: Text(
                 'Batal',
-                style: TextStyle(color: AppColor.primary),
+                style: TextStyle(color: AppColor.primary, fontSize: 30.sp),
               ),
             ),
             ElevatedButton(
@@ -134,7 +137,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                minimumSize: Size(120.w, 70.h),
+                minimumSize: Size(120.w, 80.h),
+                maximumSize: Size(280.w, 80.h),
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
@@ -151,9 +155,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   weightController.clear();
                 }
               },
-              child: const Text(
+              child: Text(
                 'Simpan',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 30.sp),
               ),
             ),
           ],
@@ -174,6 +178,8 @@ class _HomeScreenState extends State<HomeScreen> {
         });
 
         return AlertDialog(
+          contentTextStyle: TextStyle(fontSize: 30.sp, color: Colors.black),
+          titleTextStyle: TextStyle(fontSize: 36.sp, color: Colors.black),
           backgroundColor: AppColor.backgroundColorPrimary,
           title: Text('Masukkan Berat untuk ${product.productName}'),
           content: SingleChildScrollView(
@@ -183,7 +189,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 controller: weightController,
                 focusNode: focusNode,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
+                style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                decoration: InputDecoration(
                   hintText: 'Berat dalam Kg (contoh: 1.5)',
                 ),
                 validator: (value) {
@@ -204,9 +211,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 weightController.clear();
                 Navigator.pop(context);
               },
-              child: const Text(
+              child: Text(
                 'Batal',
-                style: TextStyle(color: AppColor.primary),
+                style: TextStyle(color: AppColor.primary, fontSize: 30.sp),
               ),
             ),
             ElevatedButton(
@@ -215,7 +222,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                minimumSize: Size(120, 40),
+                minimumSize: Size(120.w, 80.h),
+                maximumSize: Size(320.w, 80.h),
               ),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
@@ -236,9 +244,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.pop(context);
                 }
               },
-              child: const Text(
+              child: Text(
                 'Tambahkan',
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.white, fontSize: 30.sp),
               ),
             ),
           ],
@@ -316,11 +324,10 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          contentTextStyle: TextStyle(fontSize: 30.sp, color: Colors.black),
+          titleTextStyle: TextStyle(fontSize: 36.sp, color: Colors.black),
           backgroundColor: AppColor.backgroundColorPrimary,
-          title: Text(
-            'Pilih Kategori',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          title: Text('Pilih Kategori'),
           content: SingleChildScrollView(
             child: Wrap(
               spacing: 8,
@@ -334,6 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       label: Text(
                         category,
                         style: TextStyle(
+                          fontSize: 30.sp,
                           color: selected ? Colors.white : Colors.black,
                         ),
                       ),
@@ -350,7 +358,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             TextButton(
-              child: Text('Reset', style: TextStyle(color: AppColor.primary)),
+              child: Text(
+                'Reset',
+                style: TextStyle(color: AppColor.primary, fontSize: 30.sp),
+              ),
               onPressed: () {
                 setState(() {
                   _selectedCategories = ['All'];
@@ -367,11 +378,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                minimumSize: Size(120.w, 70.h),
+                minimumSize: Size(120.w, 80.h),
+                maximumSize: Size(280.w, 80.h),
                 backgroundColor: AppColor.primary,
                 foregroundColor: Colors.white,
               ),
-              child: Text('Terapkan'),
+              child: Text('Terapkan', style: TextStyle(fontSize: 30.sp)),
               onPressed: () {
                 setState(() {
                   _selectedCategories = tempSelected;
@@ -710,279 +722,274 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // *Bagian Kanan
             Expanded(
-              child: SizedBox(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // HEADER
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Text(
+                            "Nama Produk",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30.sp,
+                            ),
+                          ),
+                        ),
+
+                        Expanded(
+                          flex: 2,
+                          child: Center(
                             child: Text(
-                              "Nama Produk",
+                              "Berat",
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 24.sp,
+                                fontSize: 30.sp,
                               ),
                             ),
                           ),
+                        ),
 
-                          Expanded(
-                            flex: 2,
-                            child: Center(
-                              child: Text(
-                                "Berat",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 24.sp,
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            "Harga",
+                            textAlign: TextAlign.right,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30.sp,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 8.h),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: cart.length,
+                        itemBuilder: (context, index) {
+                          final item = cart[index];
+
+                          final product = allProducts.firstWhere(
+                            (b) => b.id == item.productId,
+                            orElse:
+                                () => Product(
+                                  id: 0,
+                                  categoryId: null,
+                                  category: '',
+                                  productName: 'Tidak ditemukan',
+                                  description: '',
+                                  image: null,
+                                  price: 0,
+                                  status: 0,
+                                ),
+                          );
+
+                          final priceTotal = item.weight * product.price;
+
+                          return InkWell(
+                            onTap: () => _editItemWeight(item),
+                            child: Dismissible(
+                              key: Key(item.productId.toString()),
+                              onDismissed: (direction) {
+                                setState(() {
+                                  cart.removeAt(index);
+                                });
+                              },
+                              background: Container(
+                                color: const Color(0xFFE55151),
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(vertical: 6.h),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        product.productName,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(fontSize: 30.sp),
+                                      ),
+                                    ),
+
+                                    Expanded(
+                                      flex: 2,
+                                      child: Center(
+                                        child: Text(
+                                          "${item.weight}Kg",
+                                          style: TextStyle(fontSize: 30.sp),
+                                        ),
+                                      ),
+                                    ),
+
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        formatCurrency(priceTotal),
+                                        textAlign: TextAlign.right,
+                                        style: TextStyle(fontSize: 30.sp),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ),
-
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              "Harga",
-                              textAlign: TextAlign.right,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24.sp,
-                              ),
-                            ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                      // *Bagian Kanan
-                      SizedBox(
-                        height: 350.h,
-                        child: ListView.builder(
-                          itemCount: cart.length,
-                          itemBuilder: (context, index) {
-                            final item = cart[index];
-                            final product = allProducts.firstWhere(
-                              (b) => b.id == item.productId,
-                              orElse:
-                                  () => Product(
-                                    id: 0,
-                                    categoryId: null,
-                                    category: '',
-                                    productName: 'Tidak ditemukan',
-                                    description: '',
-                                    image: null,
-                                    price: 0,
-                                    status: 0,
-                                  ),
-                            );
-
-                            final priceTotal = item.weight * product.price;
-                            return InkWell(
-                              onTap: () => _editItemWeight(item),
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4.0,
-                                    ),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        vertical: 4.h,
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Dismissible(
-                                        key: Key(item.productId.toString()),
-                                        onDismissed: (direction) {
-                                          setState(() {
-                                            cart.removeAt(index);
-                                          });
-                                        },
-                                        background: Container(
-                                          color: Color(0xFFE55151),
-                                          alignment: Alignment.centerRight,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 20,
-                                          ),
-                                          child: const Icon(
-                                            Icons.delete,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              flex: 3,
-                                              child: Text(
-                                                product.productName,
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontSize: 28.sp,
-                                                ),
-                                              ),
-                                            ),
-
-                                            Expanded(
-                                              flex: 2,
-                                              child: Center(
-                                                child: Text(
-                                                  "${item.weight}Kg",
-                                                  style: TextStyle(
-                                                    fontSize: 28.sp,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-
-                                            Expanded(
-                                              flex: 2,
-                                              child: Text(
-                                                formatCurrency(priceTotal),
-                                                textAlign: TextAlign.right,
-                                                style: TextStyle(
-                                                  fontSize: 28.sp,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-
-                      Divider(color: Colors.grey),
-                      Text(
+                    ),
+                    Divider(color: Colors.grey),
+                    Center(
+                      child: Text(
+                        textAlign: TextAlign.center,
                         "Ringkasan Pesanan",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 24.sp,
+                          fontSize: 30.sp,
                         ),
                       ),
+                    ),
 
-                      Expanded(
-                        child: SizedBox(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    height: 100.h,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Total Item",
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 30.sp,
-                                          ),
-                                        ),
-                                        Text(
-                                          "Total Berat",
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 30.sp,
-                                          ),
-                                        ),
+                    SizedBox(height: 10.h),
 
-                                        Text(
-                                          "Total Harga",
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 30.sp,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 100.h,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          "${cart.length}",
-                                          style: TextStyle(fontSize: 30.sp),
-                                        ),
-
-                                        Text(
-                                          "${cart.fold<double>(0, (total, item) => total + item.weight).toStringAsFixed(1)} Kg",
-                                          style: TextStyle(fontSize: 30.sp),
-                                        ),
-                                        Text(
-                                          " ${formatCurrency(cart.fold<int>(0, (total, item) {
-                                            final product = allProducts.firstWhere((b) => b.id == item.productId, orElse: () => Product(id: 0, categoryId: null, category: '', productName: '', description: '', image: '', price: 0, status: 0));
-                                            return total + (product.price * item.weight).toInt();
-                                          }))}",
-                                          style: TextStyle(fontSize: 30.sp),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Total Item",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 30.sp,
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Spacer(flex: 1),
-                      ElevatedButton(
-                        onPressed:
-                            cart.isEmpty
-                                ? null
-                                : () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      duration: Durations.medium4,
-                                      type: PageTransitionType.rightToLeft,
-                                      child: ConfirmPaymentScreen(
-                                        cart: cart,
-                                        allProducts: allProducts,
-                                        tax: taxPercentage,
-                                        discount: discountPercentage,
-                                      ),
-                                    ),
-                                  );
-                                },
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: AppColor.buttonColor,
-                          disabledBackgroundColor: Colors.grey,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                            ),
 
-                          minimumSize: (Size(double.infinity, 80.h)),
+                            SizedBox(height: 6.h),
+
+                            Text(
+                              "Total Berat",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 30.sp,
+                              ),
+                            ),
+
+                            SizedBox(height: 6.h),
+
+                            Text(
+                              "Total Harga",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 30.sp,
+                              ),
+                            ),
+                          ],
                         ),
-                        child: Text(
-                          "Lanjutkan Pembayaran",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 32.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              "${cart.length}",
+                              style: TextStyle(fontSize: 30.sp),
+                            ),
+
+                            SizedBox(height: 6.h),
+
+                            Text(
+                              "${cart.fold<double>(0, (total, item) => total + item.weight).toStringAsFixed(1)} Kg",
+                              style: TextStyle(fontSize: 30.sp),
+                            ),
+
+                            SizedBox(height: 6.h),
+
+                            Text(
+                              formatCurrency(
+                                cart.fold<int>(0, (total, item) {
+                                  final product = allProducts.firstWhere(
+                                    (b) => b.id == item.productId,
+                                    orElse:
+                                        () => Product(
+                                          id: 0,
+                                          categoryId: null,
+                                          category: '',
+                                          productName: '',
+                                          description: '',
+                                          image: '',
+                                          price: 0,
+                                          status: 0,
+                                        ),
+                                  );
+
+                                  return total +
+                                      (product.price * item.weight).toInt();
+                                }),
+                              ),
+                              style: TextStyle(fontSize: 30.sp),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: 16.h),
+                    ElevatedButton(
+                      onPressed:
+                          cart.isEmpty
+                              ? null
+                              : () {
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    duration: Durations.medium4,
+                                    type: PageTransitionType.rightToLeft,
+                                    child: ConfirmPaymentScreen(
+                                      cart: cart,
+                                      allProducts: allProducts,
+                                      tax: taxPercentage,
+                                      discount: discountPercentage,
+                                    ),
+                                  ),
+                                );
+                              },
+
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: AppColor.buttonColor,
+                        disabledBackgroundColor: Colors.grey,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        minimumSize: Size(double.infinity, 70.h),
+                      ),
+
+                      child: Text(
+                        "Lanjutkan Pembayaran",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 34.sp,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

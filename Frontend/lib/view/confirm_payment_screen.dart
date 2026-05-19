@@ -131,15 +131,24 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                   Expanded(
                     child:
                         filteredCustomers.isEmpty
-                            ? const Center(child: Text("Tidak ada pelanggan"))
+                            ? Center(
+                              child: Text(
+                                "Tidak ada pelanggan",
+                                style: TextStyle(fontSize: 30.sp),
+                              ),
+                            )
                             : ListView.builder(
                               itemCount: filteredCustomers.length,
                               itemBuilder: (context, index) {
                                 final customer = filteredCustomers[index];
                                 return ListTile(
-                                  title: Text(customer['customer_name']),
+                                  title: Text(
+                                    customer['customer_name'],
+                                    style: TextStyle(fontSize: 30.sp),
+                                  ),
                                   subtitle: Text(
                                     customer['phone_number'].toString(),
+                                    style: TextStyle(fontSize: 30.sp),
                                   ),
                                   onTap: () {
                                     _customerNameController.text =
@@ -219,7 +228,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
       dialogBackgroundColor: AppColor.backgroundColorPrimary,
       btnCancelColor: AppColor.primary,
       headerAnimationLoop: false,
-
+      bodyHeaderDistance: 0,
       title: "Berhasil",
       desc: "Transaksi berhasil dilakukan",
       btnCancelText: "Print",
@@ -234,12 +243,15 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text("Kasir"),
-                    const Text("Nama Customer"),
-                    const Text("Nomor Handphone"),
-                    const Text("Tanggal"),
-                    const Text("Metode Pembayaran"),
-                    const Divider(),
+                    Text("Kasir", style: TextStyle(fontSize: 30.sp)),
+                    Text("Nama Customer", style: TextStyle(fontSize: 30.sp)),
+                    Text("Nomor Handphone", style: TextStyle(fontSize: 30.sp)),
+                    Text("Tanggal", style: TextStyle(fontSize: 30.sp)),
+                    Text(
+                      "Metode Pembayaran",
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
+                    Divider(),
                     SizedBox(
                       height: 150.h,
                       child: ListView.builder(
@@ -253,15 +265,19 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           return Text(
                             '${product.productName} '
                             'x ${item.weight} Kg',
+                            style: TextStyle(fontSize: 30.sp),
                           );
                         },
                       ),
                     ),
-                    const Divider(),
-                    const Text("QTY"),
-                    const Text("Total"),
-                    const Text("Jumlah Pembayaran"),
-                    const Text("Kembalian"),
+                    Divider(),
+                    Text("QTY", style: TextStyle(fontSize: 30.sp)),
+                    Text("Total", style: TextStyle(fontSize: 30.sp)),
+                    Text(
+                      "Jumlah Pembayaran",
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
+                    Text("Kembalian", style: TextStyle(fontSize: 30.sp)),
                   ],
                 ),
               ),
@@ -271,11 +287,23 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text(_username ?? ""),
-                    Text(_customerNameController.text),
-                    Text(_phoneNumberController.text),
-                    Text(DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())),
-                    Text(getPaymentMethodLabel(_paymentMethod)),
+                    Text(_username ?? "", style: TextStyle(fontSize: 30.sp)),
+                    Text(
+                      _customerNameController.text,
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
+                    Text(
+                      _phoneNumberController.text,
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
+                    Text(
+                      DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now()),
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
+                    Text(
+                      getPaymentMethodLabel(_paymentMethod),
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
                     const Divider(),
                     SizedBox(
                       height: 150.h,
@@ -287,16 +315,28 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                           final total = item.price * item.weight;
                           return Align(
                             alignment: Alignment.centerRight,
-                            child: Text(formatCurrency(total)),
+                            child: Text(
+                              formatCurrency(total),
+                              style: TextStyle(fontSize: 30.sp),
+                            ),
                           );
                         },
                       ),
                     ),
                     const Divider(),
-                    Text(widget.cart.length.toString()),
-                    Text(formatCurrency(totalHarga)),
-                    Text(_totalPayment.text),
-                    Text(kembalian >= 0 ? formatCurrency(kembalian) : 'Rp 0'),
+                    Text(
+                      widget.cart.length.toString(),
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
+                    Text(
+                      formatCurrency(totalHarga),
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
+                    Text(_totalPayment.text, style: TextStyle(fontSize: 30.sp)),
+                    Text(
+                      kembalian >= 0 ? formatCurrency(kembalian) : 'Rp 0',
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
                   ],
                 ),
               ),
@@ -312,11 +352,21 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
           if (!context.mounted) return;
 
           AwesomeDialog(
+            descTextStyle: TextStyle(fontSize: 30.sp),
+            titleTextStyle: TextStyle(
+              fontSize: 34.sp,
+              fontWeight: FontWeight.w600,
+            ),
+            buttonsTextStyle: TextStyle(
+              fontSize: 30.sp,
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
             context: context,
             dialogType: DialogType.error,
             animType: AnimType.scale,
             headerAnimationLoop: false,
-            width: 450.w,
+            width: 1050.w,
             dismissOnTouchOutside: false,
             dismissOnBackKeyPress: false,
             dialogBackgroundColor: AppColor.backgroundColorPrimary,
@@ -445,19 +495,32 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
           },
         );
         await cetakStrukLaundryEscPos(order: order, items: itemList);
+
         await Future.delayed(const Duration(seconds: 10));
-        if (!isSkipped && context.mounted) {
+
+        if (!mounted || isSkipped) return;
+
+        if (mounted) {
           dialogSetState(() {
             isSecondPrint = true;
           });
-          await cetakStrukLaundryEscPos(order: order, items: itemList);
-          await Future.delayed(const Duration(seconds: 10));
-          if (context.mounted) {
-            Navigator.pop(context);
-            Navigator.pop(context);
-          }
-          widget.cart.clear();
         }
+
+        await cetakStrukLaundryEscPos(order: order, items: itemList);
+
+        await Future.delayed(const Duration(seconds: 10));
+
+        if (!mounted) return;
+
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
+        widget.cart.clear();
       },
       btnOkOnPress: () {
         setState(() {
@@ -627,11 +690,6 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      Text(
-                                        formatCurrency(subTotal),
-                                        style: TextStyle(fontSize: 30.sp),
-                                      ),
-                                      Gap(10),
                                       Text(
                                         formatCurrency(total),
                                         style: TextStyle(fontSize: 30.sp),

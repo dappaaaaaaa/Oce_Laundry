@@ -49,9 +49,12 @@ class SettingContentWidget extends StatelessWidget {
                     children: [
                       Text(
                         'Sinkronisasi Produk Dari Server Ke Lokal',
-                        style: TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 30.sp,
+                        ),
                       ),
-                      Icon(FontAwesome.rotate_solid),
+                      Icon(FontAwesome.rotate_solid, size: 18),
                     ],
                   ),
                 ),

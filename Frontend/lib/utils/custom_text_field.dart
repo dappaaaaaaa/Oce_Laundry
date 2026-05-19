@@ -11,7 +11,7 @@ class CustomTextFieldStyle {
     Icon? icon,
 
     Widget? iconButton,
-    double borderRadius = 16,
+    double borderRadius = 8,
     Color focusedBorderColor = const Color.fromRGBO(40, 124, 145, 1),
     Color hintTextColor = const Color.fromRGBO(0, 0, 0, 0.4),
     double borderWidth = 2.5,
@@ -24,14 +24,15 @@ class CustomTextFieldStyle {
       prefixIcon: icon,
       counterText: "",
       suffix: suffix,
-      suffixStyle: TextStyle(fontSize: 12, color: hintTextColor),
+      suffixStyle: TextStyle(fontSize: 30.sp, color: hintTextColor),
+      labelStyle: TextStyle(fontSize: 30.sp),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
         borderSide: BorderSide(width: borderWidth, color: focusedBorderColor),
       ),
 
       contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-      hintStyle: TextStyle(color: hintTextColor, fontSize: 13),
+      hintStyle: TextStyle(color: hintTextColor, fontSize: 30.sp),
 
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(borderRadius)),

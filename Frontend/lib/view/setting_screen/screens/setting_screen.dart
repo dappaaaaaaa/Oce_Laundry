@@ -241,8 +241,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             padding: EdgeInsets.symmetric(horizontal: 20.w),
                             labelStyle: const TextStyle(height: 1),
                             materialTapTargetSize:
-                                MaterialTapTargetSize
-                                    .shrinkWrap, // Reduces extra space
+                                MaterialTapTargetSize.shrinkWrap,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(8),

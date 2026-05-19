@@ -104,7 +104,7 @@ class _PrinterContentState extends State<PrinterContent> {
           "Pengaturan Printer",
           style: TextStyle(
             color: Colors.black,
-            fontSize: 50.sp,
+            fontSize: 34.sp,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -123,13 +123,12 @@ class _PrinterContentState extends State<PrinterContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_infoConnection),
+            Text(_infoConnection, style: TextStyle(fontSize: 30.sp)),
             const SizedBox(height: 10),
-            Text(_msj),
+            Text(_msj, style: TextStyle(fontSize: 30.sp)),
             const SizedBox(height: 10),
             Row(
               children: [
-
                 Expanded(
                   child: SizedBox(
                     height: 60.h,
@@ -145,15 +144,12 @@ class _PrinterContentState extends State<PrinterContent> {
                           borderRadius: BorderRadius.circular(12.r),
                         ),
 
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
                       ),
 
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-
                           if (_progress)
                             Padding(
                               padding: EdgeInsets.only(right: 8.w),
@@ -180,11 +176,7 @@ class _PrinterContentState extends State<PrinterContent> {
 
                           SizedBox(width: 8.w),
 
-                          if (!_progress)
-                            Icon(
-                              Icons.search,
-                              size: 30.sp,
-                            ),
+                          if (!_progress) Icon(Icons.search, size: 30.sp),
                         ],
                       ),
                     ),
@@ -209,15 +201,12 @@ class _PrinterContentState extends State<PrinterContent> {
                           borderRadius: BorderRadius.circular(12.r),
                         ),
 
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12.w,
-                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
                       ),
 
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-
                           Flexible(
                             child: Text(
                               "Putuskan Sambungan",

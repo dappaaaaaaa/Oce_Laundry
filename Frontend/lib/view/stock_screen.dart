@@ -277,38 +277,36 @@ class _StockScreenState extends State<StockScreen> {
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.grey.withValues(alpha: 0.1),
-                          
+
                           borderRadius: BorderRadius.circular(50),
                         ),
                         child: PopupMenuButton<String>(
-                          icon: Icon(
-                            Icons.sort,
-                            color: AppColor.primary,
-                          ),
+                          icon: Icon(Icons.sort, color: AppColor.primary),
                           color: AppColor.backgroundColorPrimary,
                           onSelected: (value) {
                             sortData(value);
                           },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: "Nama A-Z",
-                              child: Text("Nama A-Z"),
-                            ),
-                            PopupMenuItem(
-                              value: "Nama Z-A",
-                              child: Text("Nama Z-A"),
-                            ),
-                            PopupMenuItem(
-                              value: "Kuantitas Terbesar",
-                              child: Text("Kuantitas Terbesar"),
-                            ),
-                            PopupMenuItem(
-                              value: "Kuantitas Terkecil",
-                              child: Text("Kuantitas Terkecil"),
-                            ),
-                          ],
+                          itemBuilder:
+                              (context) => [
+                                PopupMenuItem(
+                                  value: "Nama A-Z",
+                                  child: Text("Nama A-Z"),
+                                ),
+                                PopupMenuItem(
+                                  value: "Nama Z-A",
+                                  child: Text("Nama Z-A"),
+                                ),
+                                PopupMenuItem(
+                                  value: "Kuantitas Terbesar",
+                                  child: Text("Kuantitas Terbesar"),
+                                ),
+                                PopupMenuItem(
+                                  value: "Kuantitas Terkecil",
+                                  child: Text("Kuantitas Terkecil"),
+                                ),
+                              ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -524,7 +522,7 @@ class _StockScreenState extends State<StockScreen> {
                                         ? "Perbarui Data Stok"
                                         : "Buat Data Stok",
                                     style: TextStyle(
-                                      fontSize: 30.sp,
+                                      fontSize: 32.sp,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -637,7 +635,10 @@ class _StockScreenState extends State<StockScreen> {
                                           height: 100,
                                           color: Colors.grey[300],
                                           child: Center(
-                                            child: Text("Belum ada gambar"),
+                                            child: Text(
+                                              "Belum ada gambar",
+                                              style: TextStyle(fontSize: 30.sp),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -672,7 +673,7 @@ class _StockScreenState extends State<StockScreen> {
                                         child: Text(
                                           "Batal",
                                           style: TextStyle(
-                                            fontSize: 28.sp,
+                                            fontSize: 30.sp,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),

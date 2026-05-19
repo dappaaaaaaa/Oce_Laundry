@@ -74,6 +74,7 @@ class HistoryOrderState extends State<HistoryOrder>
               backgroundColor: AppColor.backgroundColorPrimary,
               title: Text(
                 isSecondPrint ? "Mencetak Struk Kedua" : "Mencetak Struk",
+                style: TextStyle(fontSize: 30.sp),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -87,6 +88,7 @@ class HistoryOrderState extends State<HistoryOrder>
                     isSecondPrint
                         ? "Sedang mencetak struk kedua..."
                         : "Sedang mencetak struk pertama...",
+                    style: TextStyle(fontSize: 30.sp),
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -210,11 +212,18 @@ class HistoryOrderState extends State<HistoryOrder>
 
   Future<void> deleteOrderDialog(BuildContext context, int orderId) async {
     AwesomeDialog(
+      descTextStyle: TextStyle(fontSize: 30.sp),
+      titleTextStyle: TextStyle(fontSize: 34.sp, fontWeight: FontWeight.w600),
+      buttonsTextStyle: TextStyle(
+        fontSize: 30.sp,
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+      ),
       context: context,
       dialogType: DialogType.warning,
       animType: AnimType.scale,
       headerAnimationLoop: false,
-      width: 400,
+      width: 450,
       dismissOnTouchOutside: false,
       dismissOnBackKeyPress: false,
       dialogBackgroundColor: AppColor.backgroundColorPrimary,
@@ -324,7 +333,7 @@ class HistoryOrderState extends State<HistoryOrder>
       context: context,
       dialogType: DialogType.noHeader,
       animType: AnimType.scale,
-      width: 500,
+      width: 450,
       dialogBackgroundColor: AppColor.backgroundColorPrimary,
       btnOkText: "Tutup",
       btnOkOnPress: () {},
@@ -337,29 +346,70 @@ class HistoryOrderState extends State<HistoryOrder>
               children: [
                 Text(
                   'Detail Pemesanan',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 32.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 10),
-                Text('ID Transaksi: ${order.id}'),
+                Text(
+                  'ID Transaksi: ${order.id}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
                 Text(
                   'Nomor Pemesanan: ${generateOrderNumber(DateTime.parse(order.transactionTime.toString()), order.id)}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
                 ),
-                Text('Tanggal: ${formatTime(order.transactionTime)}'),
+                Text(
+                  'Tanggal: ${formatTime(order.transactionTime)}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
                 const Divider(thickness: 1, height: 24),
-                Text('Nama Pelanggan: ${order.customerName}'),
-                Text('Nomor HP: ${order.phoneNumber ?? ""}'),
-                Text('Nama Kasir: ${order.cashierName}'),
-                Text('Metode Pembayaran: $metodePembayaran'),
+                Text(
+                  'Nama Pelanggan: ${order.customerName}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
+                Text(
+                  'Nomor HP: ${order.phoneNumber ?? ""}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
+                Text(
+                  'Nama Kasir: ${order.cashierName}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
+                Text(
+                  'Metode Pembayaran: $metodePembayaran',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
                 const Divider(thickness: 1, height: 24),
-                Text('Total Item: ${order.totalItem}'),
-                Text('Subtotal: ${formatCurrency(order.subTotal)}'),
-                Text('Total: ${formatCurrency(order.total)}'),
-                Text('Bayar: ${formatCurrency(order.totalPayment)}'),
-                Text('Kembalian: ${formatCurrency(kembalian)}'),
+                Text(
+                  'Total Item: ${order.totalItem}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
+                Text(
+                  'Subtotal: ${formatCurrency(order.subTotal)}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
+                Text(
+                  'Total: ${formatCurrency(order.total)}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
+                Text(
+                  'Bayar: ${formatCurrency(order.totalPayment)}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
+                Text(
+                  'Kembalian: ${formatCurrency(kembalian)}',
+                  style: TextStyle(fontSize: 30.sp, color: Colors.black),
+                ),
                 const Divider(thickness: 1, height: 24),
                 Text(
                   'Daftar Produk:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30.sp,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 ...items.map((item) {
@@ -371,15 +421,29 @@ class HistoryOrderState extends State<HistoryOrder>
                       children: [
                         Text(
                           '${item['product_name']}',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 30.sp,
+                            color: Colors.black,
+                          ),
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               '${item['weight']} x ${formatCurrency(item['price'])}',
+                              style: TextStyle(
+                                fontSize: 30.sp,
+                                color: Colors.black,
+                              ),
                             ),
-                            Text(formatCurrency(total)),
+                            Text(
+                              formatCurrency(total),
+                              style: TextStyle(
+                                fontSize: 30.sp,
+                                color: Colors.black,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -484,7 +548,7 @@ class HistoryOrderState extends State<HistoryOrder>
 
               title: Text(
                 "Filter Transaksi",
-                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 34.sp, fontWeight: FontWeight.bold),
               ),
 
               content: SizedBox(
@@ -501,7 +565,7 @@ class HistoryOrderState extends State<HistoryOrder>
                         dropdownColor: AppColor.backgroundColorPrimary,
                         style: TextStyle(fontSize: 30.sp, color: Colors.black),
                         decoration: InputDecoration(
-                          labelStyle: TextStyle(fontSize: 22.sp),
+                          labelStyle: TextStyle(fontSize: 26.sp),
                           labelText: "Status Pesanan",
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(14),
@@ -584,8 +648,11 @@ class HistoryOrderState extends State<HistoryOrder>
                     SizedBox(
                       height: 340.h,
                       child: SfDateRangePicker(
+                        startRangeSelectionColor: AppColor.primary,
+                        endRangeSelectionColor: AppColor.primary,
+                        todayHighlightColor: AppColor.primary,
                         viewSpacing: 20,
-
+                        selectionColor: AppColor.primary,
                         showActionButtons: false,
                         view: DateRangePickerView.month,
                         selectionShape: DateRangePickerSelectionShape.rectangle,
@@ -630,7 +697,10 @@ class HistoryOrderState extends State<HistoryOrder>
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text("Batal"),
+                  child: Text(
+                    "Batal",
+                    style: TextStyle(fontSize: 30.sp, color: AppColor.primary),
+                  ),
                 ),
 
                 TextButton(
@@ -645,7 +715,10 @@ class HistoryOrderState extends State<HistoryOrder>
 
                     Navigator.pop(context);
                   },
-                  child: const Text("Reset"),
+                  child: Text(
+                    "Reset",
+                    style: TextStyle(fontSize: 30.sp, color: AppColor.primary),
+                  ),
                 ),
 
                 TextButton(
@@ -668,7 +741,10 @@ class HistoryOrderState extends State<HistoryOrder>
                     Navigator.pop(context);
                   },
 
-                  child: const Text("Terapkan"),
+                  child: Text(
+                    "Terapkan",
+                    style: TextStyle(fontSize: 30.sp, color: AppColor.primary),
+                  ),
                 ),
               ],
             );
@@ -792,8 +868,11 @@ class HistoryOrderState extends State<HistoryOrder>
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                          return Center(
+                            child: LoadingAnimationWidget.staggeredDotsWave(
+                              color: AppColor.primary,
+                              size: 32,
+                            ),
                           );
                         }
                         if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -810,27 +889,56 @@ class HistoryOrderState extends State<HistoryOrder>
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: DataTable2(
+                              horizontalMargin: 0,
+                              columnSpacing: 0,
+                              dataTextStyle: TextStyle(
+                                fontSize: 30.sp,
+                                color: Colors.black,
+                              ),
+                              headingRowHeight: 60.h,
                               empty: Text("Tidak Ditemukan Data"),
                               fixedLeftColumns: 2,
-                              dataRowHeight: 120.h,
-                              columnSpacing: 10,
-
+                              dataRowHeight: 90.h,
+                              fixedTopRows: 1,
                               headingRowColor: WidgetStateProperty.resolveWith(
                                 (states) => AppColor.primary,
                               ),
+                              dividerThickness: 0.5,
                               headingTextStyle: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
+                                fontSize: 34.sp,
                                 fontWeight: FontWeight.bold,
                               ),
-                              border: TableBorder.all(
-                                color: Colors.black,
-                                width: 0.5,
+                              border: TableBorder(
+                                top: BorderSide(
+                                  color: Colors.black,
+                                  width: 0.5,
+                                ),
+                                bottom: BorderSide(
+                                  color: Colors.black,
+                                  width: 0.5,
+                                ),
+                                left: BorderSide(
+                                  color: Colors.black,
+                                  width: 0.5,
+                                ),
+                                right: BorderSide(
+                                  color: Colors.black,
+                                  width: 0.5,
+                                ),
+                                verticalInside: BorderSide(
+                                  color: Colors.black,
+                                  width: 0.5,
+                                ),
+                                horizontalInside: BorderSide(
+                                  color: Colors.black,
+                                  width: 0.5,
+                                ),
                               ),
                               columns: [
                                 DataColumn2(
-                                  label: Center(child: Text('No')),
-                                  fixedWidth: 5.w,
+                                  fixedWidth: 45,
+                                  label: Center(child: Text("No")),
                                 ),
                                 DataColumn2(
                                   label: Center(child: Text('Customer')),
@@ -849,7 +957,7 @@ class HistoryOrderState extends State<HistoryOrder>
                                 ),
                                 DataColumn2(
                                   label: Center(child: Text('Aksi')),
-                                  minWidth: 615.w,
+                                  minWidth: 610.w,
                                 ),
                               ],
                               rows:
@@ -857,10 +965,17 @@ class HistoryOrderState extends State<HistoryOrder>
                                     final index = entry.key;
                                     final order = entry.value;
 
-                                    return DataRow(
+                                    return DataRow2(
                                       cells: [
-                                        DataCell(Text("${index + 1}")),
-                                        DataCell(Text(order.customerName)),
+                                        DataCell(
+                                          Center(child: Text("${index + 1}")),
+                                        ),
+                                        DataCell(
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(order.customerName),
+                                          ),
+                                        ),
                                         DataCell(
                                           Text(order.phoneNumber.toString()),
                                         ),
@@ -983,6 +1098,21 @@ class HistoryOrderState extends State<HistoryOrder>
                                                   ],
                                                   onChanged: (newValue) {
                                                     AwesomeDialog(
+                                                      descTextStyle: TextStyle(
+                                                        fontSize: 30.sp,
+                                                      ),
+                                                      titleTextStyle: TextStyle(
+                                                        fontSize: 34.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
+                                                      buttonsTextStyle:
+                                                          TextStyle(
+                                                            fontSize: 30.sp,
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
                                                       context: context,
                                                       width: 400,
                                                       dialogBackgroundColor:
@@ -1092,6 +1222,9 @@ class HistoryOrderState extends State<HistoryOrder>
                                                         ).showSnackBar(
                                                           SnackBar(
                                                             content: Text(
+                                                              style: TextStyle(
+                                                                fontSize: 30.sp,
+                                                              ),
                                                               'Printer belum terhubung. Sambungkan terlebih dahulu.',
                                                             ),
                                                             backgroundColor:
@@ -1117,7 +1250,10 @@ class HistoryOrderState extends State<HistoryOrder>
                                                     }
                                                   }
                                                 },
-                                                icon: Icon(Icons.print),
+                                                icon: Icon(
+                                                  Icons.print,
+                                                  size: 50.sp,
+                                                ),
                                               ),
                                               IconButton(
                                                 onPressed: () async {
@@ -1208,12 +1344,14 @@ class HistoryOrderState extends State<HistoryOrder>
                                                 icon: Icon(
                                                   FontAwesome.whatsapp_brand,
                                                   color: Colors.green,
+                                                  size: 50.sp,
                                                 ),
                                               ),
                                               IconButton(
                                                 icon: Icon(
                                                   Icons.info_outline,
                                                   color: Colors.blue,
+                                                  size: 50.sp,
                                                 ),
                                                 onPressed: () async {
                                                   setState(() {
@@ -1282,6 +1420,7 @@ class HistoryOrderState extends State<HistoryOrder>
                                                   icon: Icon(
                                                     Icons.payment_rounded,
                                                     color: Colors.red,
+                                                    size: 50.sp,
                                                   ),
                                                 ),
                                               if (order.isOrderComplete != 3)
@@ -1289,6 +1428,7 @@ class HistoryOrderState extends State<HistoryOrder>
                                                   icon: Icon(
                                                     Icons.delete,
                                                     color: Colors.red,
+                                                    size: 50.sp,
                                                   ),
                                                   onPressed: () async {
                                                     deleteOrderDialog(
