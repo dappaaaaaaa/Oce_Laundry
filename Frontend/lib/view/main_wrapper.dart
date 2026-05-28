@@ -6,7 +6,8 @@ import 'package:aplikasi_demo_test/view/stock_screen.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 import '../service/api_service.dart';
 import 'home_screen.dart';
 import 'history_order/history_order.dart';
@@ -101,7 +102,7 @@ class _MainwrapperState extends State<Mainwrapper> {
 
   // *Widget untuk membangun item navigasi
   Widget _buildNavItem({
-    required IconData icon,
+    required Widget icon,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
@@ -114,7 +115,7 @@ class _MainwrapperState extends State<Mainwrapper> {
           color: isSelected ? const Color(0xFF486471) : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: Colors.white, size: 24),
+        child: icon,
       ),
     );
   }
@@ -134,27 +135,37 @@ class _MainwrapperState extends State<Mainwrapper> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildNavItem(
-                  icon: Icons.home,
+                  icon: Icon(Icons.home, color: Colors.white),
                   isSelected: _selectedIndex == 0,
                   onTap: () => setState(() => _selectedIndex = 0),
                 ),
                 _buildNavItem(
-                  icon: Icons.history,
+                  icon: Icon(Icons.history, color: Colors.white),
                   isSelected: _selectedIndex == 1,
                   onTap: () => setState(() => _selectedIndex = 1),
                 ),
                 _buildNavItem(
-                  icon: Icons.settings,
+                  icon: Icon(Icons.settings, color: Colors.white),
                   isSelected: _selectedIndex == 2,
                   onTap: () => setState(() => _selectedIndex = 2),
                 ),
                 _buildNavItem(
-                  icon: FontAwesome.address_book_solid,
+                  icon: Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.solidAddressBook,
+                      color: Colors.white,
+                    ),
+                  ),
                   isSelected: _selectedIndex == 3,
                   onTap: () => setState(() => _selectedIndex = 3),
                 ),
                 _buildNavItem(
-                  icon: FontAwesome.box_archive_solid,
+                  icon: Center(
+                    child: FaIcon(
+                      FontAwesomeIcons.boxArchive,
+                      color: Colors.white,
+                    ),
+                  ),
                   isSelected: _selectedIndex == 4,
                   onTap: () => setState(() => _selectedIndex = 4),
                 ),

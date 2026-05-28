@@ -5,7 +5,6 @@ import 'package:aplikasi_demo_test/view/setting_screen/cubit/tax_discount_state.
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:icons_plus/icons_plus.dart';
 
 class TaxDiscountSection extends StatefulWidget {
   const TaxDiscountSection({Key? key}) : super(key: key);
@@ -56,7 +55,7 @@ class _TaxDiscountSectionState extends State<TaxDiscountSection>
           "Apakah anda yakin ingin menghapus data ${isTaxTab ? "Pajak" : "Diskon"} ini?",
       dismissOnBackKeyPress: false,
       dismissOnTouchOutside: false,
-      btnOkIcon: FontAwesome.trash_solid,
+
       btnOkText: "Hapus",
       btnCancelText: "Batal",
       dialogBackgroundColor: AppColor.backgroundColorPrimary,
@@ -125,17 +124,14 @@ class _TaxDiscountSectionState extends State<TaxDiscountSection>
                           style: TextStyle(fontSize: 15),
                         ),
                         subtitle: Text("Besaran: ${item[valueKey]} %"),
-                        leading:
-                            isTaxTab
-                                ? Icon(BoxIcons.bxs_badge_dollar)
-                                : Icon(Bootstrap.tag_fill),
+
                         iconColor: AppColor.primary,
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             IconButton(
-                              icon: const Icon(
-                                FontAwesome.trash_solid,
+                              icon: Icon(
+                                Icons.delete,
                                 size: 22,
                                 color: Colors.red,
                               ),
@@ -154,10 +150,7 @@ class _TaxDiscountSectionState extends State<TaxDiscountSection>
                               },
                             ),
                             IconButton(
-                              icon: const Icon(
-                                BoxIcons.bx_edit,
-                                color: Colors.orange,
-                              ),
+                              icon: Icon(Icons.edit, color: Colors.orange),
                               onPressed: () {
                                 setState(() {
                                   isFormVisible = true;

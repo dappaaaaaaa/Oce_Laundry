@@ -445,4 +445,29 @@ class ApiService {
       return false;
     }
   }
+
+  Future<bool> updateOrderPayment(
+    int orderId,
+    int paymentAmount,
+    int isComplete,
+    int paymentMethod,
+    String token,
+  ) async {
+    try {
+      final response = await dio.put(
+        '$baseUrl/orders/$orderId/payment',
+        data: {
+          'total_payment': paymentAmount,
+          'is_payment_complete': isComplete,
+          'payment_method': paymentMethod,
+        },
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      return response.statusCode == 200;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }

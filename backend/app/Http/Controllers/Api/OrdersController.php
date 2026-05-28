@@ -280,26 +280,29 @@ class OrdersController extends Controller
     {
         try {
 
+            $query = Order::where(function ($query) {
+
+                $query->where('is_order_complete', '!=', 3)
+
+                    ->orWhere('is_payment_complete', 0)
+
+                    ->orWhere(function ($q) {
+
+                        $q->where('is_order_complete', 3)
+                            ->where('is_payment_complete', 1)
+                            ->where(
+                                'updated_at',
+                                '>=',
+                                Carbon::now()->subHours(24)
+                            );
+                    });
+            });
+
             $data = [
-                '0' => Order::where(
-                    'is_order_complete',
-                    0
-                )->count(),
-
-                '1' => Order::where(
-                    'is_order_complete',
-                    1
-                )->count(),
-
-                '2' => Order::where(
-                    'is_order_complete',
-                    2
-                )->count(),
-
-                '3' => Order::where(
-                    'is_order_complete',
-                    3
-                )->count(),
+                (clone $query)->where('is_order_complete', 0)->count(),
+                (clone $query)->where('is_order_complete', 1)->count(),
+                (clone $query)->where('is_order_complete', 2)->count(),
+                (clone $query)->where('is_order_complete', 3)->count(),
             ];
 
             return response()->json([

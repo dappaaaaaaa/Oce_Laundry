@@ -10,8 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:keyboard_avoider/keyboard_avoider.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 class CustomerScreen extends StatefulWidget {
   const CustomerScreen({super.key});
@@ -223,18 +223,18 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                                 onPressed:
                                                     () =>
                                                         _showDeleteDialog(cust),
-                                                icon: const Icon(
+                                                icon: Icon(
                                                   size: 20,
-                                                  FontAwesome.trash_solid,
+                                                  Icons.delete,
                                                   color: Colors.red,
                                                 ),
                                               ),
                                               IconButton(
                                                 onPressed:
                                                     () => _editCustomer(cust),
-                                                icon: const Icon(
+                                                icon: Icon(
                                                   size: 20,
-                                                  BoxIcons.bx_edit,
+                                                  Icons.edit,
                                                   color: Colors.orange,
                                                 ),
                                               ),
@@ -287,7 +287,7 @@ class _CustomerScreenState extends State<CustomerScreen> {
                                   ),
                                 ),
                                 Icon(
-                                  Bootstrap.person_plus_fill,
+                                  LucideIcons.contactRound,
                                   color: Colors.white,
                                   size: 20,
                                 ),

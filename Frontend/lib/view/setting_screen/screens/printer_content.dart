@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:gap/gap.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:aplikasi_demo_test/service/printer_service.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
@@ -40,8 +39,8 @@ class _PrinterContentState extends State<PrinterContent> {
     setState(() {
       _infoBluetooth =
           enabled
-              ? Icon(ZondIcons.bluetooth, color: Colors.blue)
-              : Icon(Clarity.bluetooth_off_solid, color: Colors.red);
+              ? FaIcon(FontAwesomeIcons.bluetooth, color: Colors.blue)
+              : FaIcon(FontAwesomeIcons.bluetoothB, color: Colors.red);
       _infoConnection =
           "Status Koneksi Bluetooth: ${connection ? "Tersambung" : "Tidak Tersambung"}";
       connected = connection;

@@ -13,8 +13,8 @@ import 'package:aplikasi_demo_test/view/update_payment_screen.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:page_transition/page_transition.dart';
@@ -582,8 +582,8 @@ class HistoryOrderState extends State<HistoryOrder>
                             value: 0,
                             child: Row(
                               children: [
-                                Icon(
-                                  FontAwesome.clock_solid,
+                                FaIcon(
+                                  FontAwesomeIcons.solidClock,
                                   color: Colors.orange,
                                   size: 18,
                                 ),
@@ -1043,8 +1043,11 @@ class HistoryOrderState extends State<HistoryOrder>
                                         DataCell(
                                           order.isOrderComplete == 3
                                               ? orderStatusRow(
-                                                icon: Icons.check_circle,
-                                                color: Colors.green,
+                                                icon: Icon(
+                                                  Icons.check_circle,
+                                                  size: 40.sp,
+                                                  color: Colors.green,
+                                                ),
                                                 text: "Selesai",
                                               )
                                               : Theme(
@@ -1062,36 +1065,46 @@ class HistoryOrderState extends State<HistoryOrder>
                                                     DropdownMenuItem(
                                                       value: '0',
                                                       child: orderStatusRow(
-                                                        icon:
-                                                            FontAwesome
-                                                                .clock_solid,
-                                                        color: Colors.orange,
+                                                        icon: FaIcon(
+                                                          FontAwesomeIcons
+                                                              .solidClock,
+                                                          color: Colors.orange,
+                                                          size: 40.sp,
+                                                        ),
+
                                                         text: "Antrian",
                                                       ),
                                                     ),
                                                     DropdownMenuItem(
                                                       value: '1',
                                                       child: orderStatusRow(
-                                                        icon: Icons.work,
-                                                        color: Colors.blue,
+                                                        icon: Icon(
+                                                          Icons.work,
+                                                          size: 40.sp,
+                                                          color: Colors.blue,
+                                                        ),
                                                         text: "Proses",
                                                       ),
                                                     ),
                                                     DropdownMenuItem(
                                                       value: '2',
                                                       child: orderStatusRow(
-                                                        icon:
-                                                            Icons.shopping_bag,
-                                                        color: Colors.purple,
+                                                        icon: Icon(
+                                                          Icons.shopping_bag,
+                                                          size: 40.sp,
+                                                          color: Colors.purple,
+                                                        ),
                                                         text: "Siap Diambil",
                                                       ),
                                                     ),
                                                     DropdownMenuItem(
                                                       value: '3',
                                                       child: orderStatusRow(
-                                                        icon:
-                                                            Icons.check_circle,
-                                                        color: Colors.green,
+                                                        icon: Icon(
+                                                          Icons.check_circle,
+                                                          size: 40.sp,
+                                                          color: Colors.green,
+                                                        ),
                                                         text: "Selesai",
                                                       ),
                                                     ),
@@ -1341,8 +1354,8 @@ class HistoryOrderState extends State<HistoryOrder>
                                                     }
                                                   }
                                                 },
-                                                icon: Icon(
-                                                  FontAwesome.whatsapp_brand,
+                                                icon: FaIcon(
+                                                  FontAwesomeIcons.whatsapp,
                                                   color: Colors.green,
                                                   size: 50.sp,
                                                 ),

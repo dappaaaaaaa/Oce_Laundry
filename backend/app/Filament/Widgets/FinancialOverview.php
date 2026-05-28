@@ -7,8 +7,7 @@ use App\Models\Expenses;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class FinancialOverview extends BaseWidget
-{
+class FinancialOverview extends BaseWidget{
     protected static ?int $sort = 1;
     protected function getStats(): array
     {
@@ -25,6 +24,7 @@ class FinancialOverview extends BaseWidget
         $unfinishedTransaction = Order::whereMonth('transaction_time', $month)
             ->whereYear('transaction_time', $year)
             ->where('is_order_complete', '!=', 3)
+            ->where('is_payment_complete', 1)
             ->count();
         $expense = Expenses::whereMonth('date', $month)
             ->whereYear('date', $year)

@@ -9,8 +9,8 @@ import 'package:aplikasi_demo_test/utils/variable.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
-import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
@@ -501,8 +501,8 @@ class _StockScreenState extends State<StockScreen> {
                                         fontSize: 34.sp,
                                       ),
                                     ),
-                                    Icon(
-                                      Bootstrap.box2,
+                                    FaIcon(
+                                      FontAwesomeIcons.boxArchive,
                                       color: Colors.white,
                                       size: 20,
                                     ),

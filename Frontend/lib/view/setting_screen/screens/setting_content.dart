@@ -1,10 +1,9 @@
-import 'package:aplikasi_demo_test/view/setting_screen/cubit/tax_discount_cubit.dart';
 import 'package:aplikasi_demo_test/view/setting_screen/screens/printer_content.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
-import 'package:icons_plus/icons_plus.dart';
+
 import '../../../utils/app_color.dart';
 
 class SettingContentWidget extends StatelessWidget {
@@ -54,7 +53,7 @@ class SettingContentWidget extends StatelessWidget {
                           fontSize: 30.sp,
                         ),
                       ),
-                      Icon(FontAwesome.rotate_solid, size: 18),
+                      FaIcon(FontAwesomeIcons.rotate, size: 18),
                     ],
                   ),
                 ),

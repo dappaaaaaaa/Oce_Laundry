@@ -9,13 +9,13 @@ import 'package:aplikasi_demo_test/utils/capitalize_words_formatter.dart';
 import 'package:aplikasi_demo_test/utils/custom_text_field.dart';
 import 'package:aplikasi_demo_test/utils/print_struk.dart';
 import 'package:aplikasi_demo_test/utils/search_bar_widget.dart';
-import 'package:aplikasi_demo_test/view/midtrans_payment_screen.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gap/gap.dart';
-import 'package:icons_plus/icons_plus.dart';
+
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
@@ -273,6 +273,7 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                     Divider(),
                     Text("QTY", style: TextStyle(fontSize: 30.sp)),
                     Text("Total", style: TextStyle(fontSize: 30.sp)),
+                    // ! Ngebug di bagian jumlah pembayaran karena hasil untuk di tampilkan di alert menggunakan variabel total payment
                     Text(
                       "Jumlah Pembayaran",
                       style: TextStyle(fontSize: 30.sp),
@@ -726,8 +727,9 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                         Row(
                                           children: [
                                             IconButton(
-                                              icon: Icon(
-                                                FontAwesome.address_book_solid,
+                                              icon: FaIcon(
+                                                FontAwesomeIcons
+                                                    .solidAddressBook,
                                                 color: AppColor.primary,
                                                 size: 30,
                                               ),
@@ -883,95 +885,111 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                         ),
 
                                         const Divider(color: Colors.black),
-
-                                        Text(
-                                          "Jumlah Pembayaran",
-                                          style: TextStyle(fontSize: 30.sp),
-                                        ),
-                                        SizedBox(height: 12.h),
-                                        ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            minHeight: 50,
-                                            maxWidth: 300,
-                                          ),
-                                          child: TextFormField(
-                                            controller: _totalPayment,
-                                            keyboardType: TextInputType.number,
-
-                                            validator: (value) {
-                                              final cleanValue = value
-                                                  ?.replaceAll(
-                                                    RegExp(r'[^0-9]'),
-                                                    '',
-                                                  );
-
-                                              final number = int.tryParse(
-                                                cleanValue ?? '',
-                                              );
-
-                                              if (_paymentMethod == 0) {
-                                                if (cleanValue == null ||
-                                                    cleanValue.isEmpty) {
-                                                  return 'Jumlah pembayaran wajib di isi';
-                                                }
-
-                                                if (number == null ||
-                                                    number <= 0) {
-                                                  return "Jumlah pembayaran wajib di isi";
-                                                }
-
-                                                if (number < total) {
-                                                  return "Jumlah pembayaran kurang dari total";
-                                                }
-                                              }
-
-                                              if (_paymentMethod == 2) {
-                                                if (cleanValue != null &&
-                                                    cleanValue.isNotEmpty) {
-                                                  if (number != null &&
-                                                      number > total) {
-                                                    return "Jumlah pembayaran lebih dari total";
-                                                  }
-                                                }
-                                              }
-
-                                              return null;
-                                            },
-
-                                            onChanged: (value) {
-                                              setState(() {
-                                                _totalPayment.clear();
-                                              });
-                                              final numericString = value
-                                                  .replaceAll(
-                                                    RegExp(r'[^0-9]'),
-                                                    '',
-                                                  );
-
-                                              final numericValue =
-                                                  int.tryParse(numericString) ??
-                                                  0;
-
-                                              final formatted = formatCurrency(
-                                                numericValue,
-                                              );
-
-                                              _totalPayment
-                                                  .value = TextEditingValue(
-                                                text: formatted,
-                                                selection:
-                                                    TextSelection.collapsed(
-                                                      offset: formatted.length,
-                                                    ),
-                                              );
-                                            },
-
-                                            decoration:
-                                                CustomTextFieldStyle.inputDecoration(
-                                                  borderRadius: 4,
+                                        if (_paymentMethod == 0 ||
+                                            _paymentMethod == 2)
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                "Jumlah Pembayaran",
+                                                style: TextStyle(
+                                                  fontSize: 30.sp,
                                                 ),
+                                              ),
+                                              SizedBox(height: 12.h),
+                                              ConstrainedBox(
+                                                constraints: BoxConstraints(
+                                                  minHeight: 50,
+                                                  maxWidth: 300,
+                                                ),
+                                                child: TextFormField(
+                                                  controller: _totalPayment,
+                                                  keyboardType:
+                                                      TextInputType.number,
+
+                                                  validator: (value) {
+                                                    final cleanValue = value
+                                                        ?.replaceAll(
+                                                          RegExp(r'[^0-9]'),
+                                                          '',
+                                                        );
+
+                                                    final number = int.tryParse(
+                                                      cleanValue ?? '',
+                                                    );
+
+                                                    if (_paymentMethod == 0) {
+                                                      if (cleanValue == null ||
+                                                          cleanValue.isEmpty) {
+                                                        return 'Jumlah pembayaran wajib di isi';
+                                                      }
+
+                                                      if (number == null ||
+                                                          number <= 0) {
+                                                        return "Jumlah pembayaran wajib di isi";
+                                                      }
+
+                                                      if (number < total) {
+                                                        return "Jumlah pembayaran kurang dari total";
+                                                      }
+                                                    }
+
+                                                    if (_paymentMethod == 2) {
+                                                      if (cleanValue != null &&
+                                                          cleanValue
+                                                              .isNotEmpty) {
+                                                        if (number != null &&
+                                                            number > total) {
+                                                          return "Jumlah pembayaran lebih dari total";
+                                                        }
+                                                      }
+                                                    }
+
+                                                    return null;
+                                                  },
+
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      _totalPayment.clear();
+                                                    });
+                                                    final numericString = value
+                                                        .replaceAll(
+                                                          RegExp(r'[^0-9]'),
+                                                          '',
+                                                        );
+
+                                                    final numericValue =
+                                                        int.tryParse(
+                                                          numericString,
+                                                        ) ??
+                                                        0;
+
+                                                    final formatted =
+                                                        formatCurrency(
+                                                          numericValue,
+                                                        );
+
+                                                    _totalPayment
+                                                        .value = TextEditingValue(
+                                                      text: formatted,
+                                                      selection:
+                                                          TextSelection.collapsed(
+                                                            offset:
+                                                                formatted
+                                                                    .length,
+                                                          ),
+                                                    );
+                                                  },
+
+                                                  decoration:
+                                                      CustomTextFieldStyle.inputDecoration(
+                                                        borderRadius: 4,
+                                                      ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ),
 
                                         SizedBox(height: 20.h),
                                         if (_paymentMethod == 0)
@@ -1124,57 +1142,13 @@ class _ConfirmPaymentScreenState extends State<ConfirmPaymentScreen> {
                                                             ),
                                                       );
 
-                                                  final phoneValue =
-                                                      int.tryParse(
-                                                        _phoneNumberController
-                                                            .text,
-                                                      );
-
                                                   final totalPayment =
-                                                      _paymentMethod == 1
-                                                          ? total
-                                                          : totalValue ?? 0;
-
-                                                  if (_paymentMethod == 1) {
-                                                    final result = await Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder:
-                                                            (
-                                                              _,
-                                                            ) => MidtransPaymentScreen(
-                                                              amount: total,
-                                                              customerName:
-                                                                  _customerNameController
-                                                                      .text,
-                                                              customerPhone:
-                                                                  phoneValue
-                                                                      .toString(),
-                                                            ),
-                                                      ),
-                                                    );
-
-                                                    if (result != true) {
-                                                      if (!context.mounted)
-                                                        return;
-
-                                                      ScaffoldMessenger.of(
-                                                        context,
-                                                      ).showSnackBar(
-                                                        const SnackBar(
-                                                          content: Text(
-                                                            'Pembayaran QRIS dibatalkan',
-                                                          ),
-                                                        ),
-                                                      );
-
-                                                      return;
-                                                    }
-                                                  }
-
+                                                      totalValue;
                                                   final orderId = await api.postOrder({
                                                     'total_payment':
-                                                        totalPayment,
+                                                        _paymentMethod == 1
+                                                            ? total
+                                                            : totalPayment,
                                                     'sub_total': subTotal,
                                                     'tax': tax,
                                                     'discount': discount,

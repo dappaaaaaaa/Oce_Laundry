@@ -1,10 +1,12 @@
 import 'package:aplikasi_demo_test/database/order.dart';
+import 'package:aplikasi_demo_test/service/api_service.dart';
+import 'package:aplikasi_demo_test/service/auth_service.dart';
 import 'package:aplikasi_demo_test/utils/app_color.dart';
 import 'package:aplikasi_demo_test/utils/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
-import '../database/database_helper.dart';
-import 'midtrans_payment_screen.dart';
 
 class UpdatePaymentScreen extends StatefulWidget {
   final Order orderData;
@@ -27,52 +29,92 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
 
   // * Fungsi untuk mengelola proses pembayaran berdasarkan metode yang dipilih
   Future<void> _handlePayment() async {
-    final db = DatabaseHelper();
+    final api = ApiService();
+    final token = AuthService.getToken();
     final total = widget.orderData.total - widget.orderData.totalPayment;
 
     final inputText = _paymentController.text.replaceAll(RegExp(r'[^0-9]'), '');
+
     final totalInput = int.tryParse(inputText) ?? 0;
 
-    if (_selectedPaymentMethod == 1) {
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder:
-              (_) => MidtransPaymentScreen(
-                amount: total,
-                customerName: widget.orderData.customerName,
-                customerPhone: widget.orderData.phoneNumber.toString(),
-              ),
-        ),
-      );
+    setState(() {
+      // _isLoading = true;
+    });
 
-      // * Memeriksa apakah pembayaran berhasil
-      if (result == true) {
+    try {
+      // =========================
+      // QRIS
+      // =========================
+      if (_selectedPaymentMethod == 1) {
         final updatedPayment = widget.orderData.totalPayment + total;
-        await db.updateOrderPayment(widget.orderData.id, updatedPayment, 1, 1);
+
+        final success = await api.updateOrderPayment(
+          widget.orderData.id,
+          updatedPayment,
+          1,
+          1,
+          await token ?? "",
+        );
+
+        if (!success) {
+          throw Exception("Gagal update pembayaran QRIS");
+        }
+
         if (!mounted) return;
+
         Navigator.pop(context, true);
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Pembayaran QRIS berhasil')),
         );
+
+        return;
       }
-    } else {
+
+      // =========================
+      // CASH
+      // =========================
       if (totalInput < total) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Jumlah pembayaran kurang dari sisa total'),
           ),
         );
+
         return;
       }
 
       final updatedPayment = widget.orderData.totalPayment + totalInput;
-      await db.updateOrderPayment(widget.orderData.id, updatedPayment, 1, 0);
+
+      final success = await api.updateOrderPayment(
+        widget.orderData.id,
+        updatedPayment,
+        1,
+        0,
+        await token ?? "",
+      );
+
+      if (!success) {
+        throw Exception("Gagal update pembayaran");
+      }
+
       if (!mounted) return;
+
       Navigator.pop(context, true);
+
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Pembayaran berhasil')));
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Terjadi kesalahan: $e')));
+    } finally {
+      if (mounted) {
+        setState(() {});
+      }
     }
   }
 
@@ -107,11 +149,16 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Nama: ${widget.orderData.customerName}"),
-                    Text("Total Sisa Pembayaran: ${formatter.format(total)}"),
+                    Text(
+                      "Nama: ${widget.orderData.customerName}",
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
+                    Text(
+                      "Total Sisa Pembayaran: ${formatter.format(total)}",
+                      style: TextStyle(fontSize: 30.sp),
+                    ),
                     const SizedBox(height: 20),
                     SizedBox(
-                      height: 340,
                       child: Column(
                         children: [
                           DropdownButtonFormField<int>(
@@ -119,9 +166,21 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                             value: _selectedPaymentMethod,
                             dropdownColor: AppColor.backgroundColorPrimary,
 
-                            items: const [
-                              DropdownMenuItem(value: 0, child: Text("Cash")),
-                              DropdownMenuItem(value: 1, child: Text("QRIS")),
+                            items: [
+                              DropdownMenuItem(
+                                value: 0,
+                                child: Text(
+                                  "Cash",
+                                  style: TextStyle(fontSize: 30.sp),
+                                ),
+                              ),
+                              DropdownMenuItem(
+                                value: 1,
+                                child: Text(
+                                  "QRIS",
+                                  style: TextStyle(fontSize: 30.sp),
+                                ),
+                              ),
                             ],
                             onChanged: (value) {
                               setState(
@@ -138,14 +197,18 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                                 ),
                               ),
                               focusColor: AppColor.primary,
-                              labelStyle: TextStyle(color: Colors.black),
+                              labelStyle: TextStyle(
+                                color: Colors.black,
+                                fontSize: 30.sp,
+                              ),
                               fillColor: AppColor.backgroundColorPrimary,
                               labelText: "Metode Pembayaran",
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: 20),
                           if (_selectedPaymentMethod == 0)
                             TextFormField(
+                              style: TextStyle(fontSize: 30.sp),
                               controller: _paymentController,
                               keyboardType: TextInputType.number,
                               decoration: CustomTextFieldStyle.inputDecoration(
@@ -169,8 +232,8 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                           const SizedBox(height: 16),
                           if (_selectedPaymentMethod == 0)
                             Wrap(
-                              spacing: 12,
-                              runSpacing: 12,
+                              spacing: 6,
+                              runSpacing: 6,
                               children: () {
                                 final List<int> preset = [
                                   5000,
@@ -197,6 +260,8 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                                       _paymentController.text = formatted;
                                     },
                                     style: ElevatedButton.styleFrom(
+                                      minimumSize: Size(280.w, 70.h),
+                                      maximumSize: Size(300.w, 100.h),
                                       backgroundColor: AppColor.primary,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(10),
@@ -206,8 +271,9 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                                       isExact
                                           ? "Uang Pas"
                                           : formatter.format(amount),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: Colors.white,
+                                        fontSize: 30.sp,
                                       ),
                                     ),
                                   );
@@ -217,7 +283,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    Gap(20),
                     Center(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -232,19 +298,25 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              maximumSize: Size(200, 80),
-                              minimumSize: Size(150, 60),
+                              minimumSize: Size(430.w, 80.h),
+                              maximumSize: Size(450.w, 100.h),
                             ),
                             child: Text(
                               "Batal",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 32.sp,
+                              ),
                             ),
                           ),
                           ElevatedButton.icon(
                             icon: const Icon(Icons.payment),
-                            label: const Text(
+                            label: Text(
                               "Bayar Sekarang",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 32.sp,
+                              ),
                             ),
                             onPressed: _handlePayment,
                             style: OutlinedButton.styleFrom(
@@ -253,8 +325,8 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              maximumSize: Size(200, 80),
-                              minimumSize: Size(150, 60),
+                              minimumSize: Size(430.w, 80.h),
+                              maximumSize: Size(450.w, 100.h),
                             ),
                           ),
                         ],
